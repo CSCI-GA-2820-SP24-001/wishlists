@@ -32,7 +32,8 @@ from service.common import status  # HTTP Status Codes
 ######################################################################
 @app.route("/")
 def index():
-    """ Root URL response """
+    """Root URL response"""
+    """Hi this is tori running a test"""
     return (
         "Reminder: return some useful information in json format about the service here",
         status.HTTP_200_OK,
