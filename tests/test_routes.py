@@ -1,5 +1,5 @@
 """
-TestYourResourceModel API Service Test Suite
+TestWishlists API Service Test Suite
 """
 
 import os
@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, YourResourceModel
+from service.models import db, Wishlists
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -40,7 +40,7 @@ class TestYourResourceService(TestCase):
     def setUp(self):
         """Runs before each test"""
         self.client = app.test_client()
-        db.session.query(YourResourceModel).delete()  # clean up the last tests
+        db.session.query(Wishlists).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
