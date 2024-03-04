@@ -46,23 +46,26 @@ def index():
 # REST API code
 
 
-@app.route("/wishlists", methods=["GET"])
-def list_wishlists():
-    """Returns all of the Wishlists"""
-    app.logger.info("Request for wishlist list")
+@app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
+def update_wishlists(wishlist_id):
+    """
+    Update a Wishlist
 
-    wishlists = []
+    This endpoint will update a Wishlist based the body that is posted
+    """
+    app.logger.info("Request to update wishlist with id: %d", wishlist_id)
+    check_content_type("application/json")
 
-    # See if any query filters were passed in
-    category = request.args.get("category")
-    name = request.args.get("name")
-    if category:
-        wishlists = Wishlists.find_by_category(category)
-    elif name:
-        wishlists = Wishlists.find_by_name(name)
-    else:
-        wishlists = Wishlists.all()
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        error(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id: '{wishlist_id}' was not found.",
+        )
 
-    results = [wishlist.serialize() for wishlist in wishlists]
-    app.logger.info("Returning %d wishlists", len(results))
-    return jsonify(results), status.HTTP_200_OK
+    wishlist.deserialize(request.get_json())
+    wishlist.id = wishlist_id
+    wishlist.update()
+
+    app.logger.info("Wishlist with ID: %d updated.", wishlist.id)
+    return jsonify(wishlist.serialize()), status.HTTP_200_OK
