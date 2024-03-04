@@ -27,7 +27,7 @@ class Item(db.Model):
     item_name = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
-        return f"<Items {self.item_name} id=[{self.id}]>"
+        return f"<Item {self.item_name} id=[{self.id}]>"
 
     def create(self):
         """Creates an Item to the database"""
@@ -67,14 +67,14 @@ class Item(db.Model):
             logger.error("Error deleting record: %s", self)
             raise DataValidationError(e) from e
 
-    def serialize(self) -> dict:
+    def serialize(self):
         """Serializes a item into a dictionary"""
         return {
             "id": self.id,
             "name": self.item_name,
         }
 
-    def deserialize(self, data: dict):
+    def deserialize(self, data):
         """
         Deserializes a item from a dictionary
         Args:
@@ -83,13 +83,6 @@ class Item(db.Model):
         try:
             self.id = data["id"]
             self.item_name = data["name"]
-            if isinstance(data["available"], bool):
-                self.available = data["available"]
-            else:
-                raise DataValidationError(
-                    "Invalid type for boolean [available]: "
-                    + str(type(data["available"]))
-                )
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
@@ -98,9 +91,31 @@ class Item(db.Model):
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid pet: body of request contained bad or no data " + str(error)
+                "Invalid item: body of request contained bad or no data " + str(error)
             ) from error
         return self
+
+    @classmethod
+    def find(cls, by_id):
+        """Finds a item by it's ID"""
+        logger.info("Processing lookup for id %s ...", by_id)
+        return cls.query.session.get(cls, by_id)
+
+    @classmethod
+    def all(cls):
+        """Returns all of the items in the database"""
+        logger.info("Processing all Wishlists")
+        return cls.query.all()
+
+    @classmethod
+    def find_by_name(cls, name):
+        """Returns all items with the given name
+
+        Args:
+            name (string): the name of the items you want to match
+        """
+        logger.info("Processing name query for %s ...", name)
+        return cls.query.filter(cls.name == name)
 
 
 class Wishlists(db.Model):
@@ -142,19 +157,6 @@ class Wishlists(db.Model):
         Updates a Wishlists to the database
         """
         logger.info("Saving %s", self.title)
-        try:
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            logger.error("Error updating record: %s", self)
-            raise DataValidationError(e) from e
-
-    def insert_item(self, item_id):
-        """
-        Inserts item into wishlist, to "items" in the database
-        """
-        logger.info("Saving %s", self.items)
-        self.items.append(item_id)
         try:
             db.session.commit()
         except Exception as e:
