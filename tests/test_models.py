@@ -6,8 +6,8 @@ import os
 import logging
 from unittest import TestCase
 from wsgi import app
-from service.models import Wishlists, DataValidationError, db
-from .factories import WishlistsFactory
+from service.models import Wishlists, Item, DataValidationError, db
+from .factories import ItemFactory, WishlistsFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -62,5 +62,17 @@ class TestWishlists(TestCase):
         self.assertEqual(data.description, wishlist.description)
         self.assertEqual(data.count, wishlist.count)
         self.assertEqual(data.date, wishlist.date)
+
+        return self
+
+    def test_create_item(self):
+        """It should Create a new item in a wishlist"""
+        items = ItemFactory()
+        items.create()
+        self.assertIsNotNone(items.id)
+        found = Item.all()
+        self.assertEqual(len(found), 1)
+        data = Item.find(items.id)
+        self.assertEqual(data.id, items.id)
 
         return self

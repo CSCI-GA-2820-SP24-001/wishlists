@@ -8,6 +8,7 @@ from unittest import TestCase
 from wsgi import app
 from service.common import status
 from service.models import db, Wishlists
+from tests.factories import WishlistsFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -56,7 +57,7 @@ class TestYourResourceService(TestCase):
     def test_update_wishlist(self):
         """It should Update an existing Wishlist"""
         # create a wishlist to update
-        test_wishlist = WishlistFactory()
+        test_wishlist = WishlistsFactory()
         response = self.client.post(BASE_URL, json=test_wishlist.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -70,3 +71,26 @@ class TestYourResourceService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_wishlist = response.get_json()
         self.assertEqual(updated_wishlist["category"], "unknown")
+
+    def test_create_item(self):
+        """It should Create a new Pet"""
+        test_item = ItemFactory()
+        logging.debug("Test Item: %s", test_item.serialize())
+        response = self.client.post(BASE_URL, json=test_item.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_item = response.get_json()
+        self.assertEqual(new_item["id"], test_item.id)
+        self.assertEqual(new_item["name"], test_item.name)
+
+        # Check that the location header was correct
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_item = response.get_json()
+        self.assertEqual(new_item["id"], test_item.id)
+        self.assertEqual(new_item["name"], test_item.name)

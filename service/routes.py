@@ -23,7 +23,7 @@ and Delete Wishlists from the inventory of wishlists in the WishlistShop
 
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import Wishlists
+from service.models import Wishlists, Item, DataValidationError
 from service.common import status  # HTTP Status Codes
 
 
@@ -43,7 +43,26 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
+
 # REST API code
+@app.route("/items", methods=["POST"])
+def create_item():
+    """
+    Creates an Item
+
+    This endpoint will create a Pet based the data in the body that is posted
+    """
+    app.logger.info("Request to create a pet")
+    check_content_type("application/json")
+
+    items = Item()
+    items.deserialize(request.get_json())
+    items.create()
+    message = items.serialize()
+    location_url = url_for("get_item", item_id=items.id, _external=True)
+
+    app.logger.info("Item with ID: %d created.", items.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])

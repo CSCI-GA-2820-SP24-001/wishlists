@@ -16,6 +16,9 @@ class ItemFactory(factory.Factory):
 
         model = Item
 
+    id = factory.Sequence(lambda n: n)
+    item_name = FuzzyText(length=63)
+
 
 class WishlistsFactory(factory.Factory):
     """Creates fake pets that you don't have to feed"""
