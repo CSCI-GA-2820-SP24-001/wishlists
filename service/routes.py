@@ -43,9 +43,33 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# REST API code
+# REST API codes
 
 
+# List wishlist
+@app.route("/wishlists", methods=["GET"])
+def list_wishlists():
+    """Returns all of the Wishlists"""
+    app.logger.info("Request for wishlist list")
+
+    wishlists = []
+
+    # See if any query filters were passed in
+    category = request.args.get("category")
+    name = request.args.get("name")
+    if category:
+        wishlists = Wishlists.find_by_category(category)
+    elif name:
+        wishlists = Wishlists.find_by_name(name)
+    else:
+        wishlists = Wishlists.all()
+
+    results = [wishlist.serialize() for wishlist in wishlists]
+    app.logger.info("Returning %d wishlists", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
+
+# Update wishlist
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
 def update_wishlists(wishlist_id):
     """
@@ -69,3 +93,21 @@ def update_wishlists(wishlist_id):
 
     app.logger.info("Wishlist with ID: %d updated.", wishlist.id)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
+
+# Delete wishlist
+@app.route("/wishlists/<int:wishlist_id>", methods=["DELETE"])
+def delete_wishlists(wishlist_id):
+    """
+    Delete a Wishlist
+
+    This endpoint will delete a Wishlist based the id specified in the path
+    """
+    app.logger.info("Request to delete wishlist with id: %d", wishlist_id)
+
+    wishlist = Wishlists.find(wishlist_id)
+    if wishlist:
+        wishlist.delete()
+
+    app.logger.info("Wishlist with ID: %d delete complete.", wishlist_id)
+    return "", status.HTTP_204_NO_CONTENT

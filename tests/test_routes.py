@@ -53,6 +53,16 @@ class TestYourResourceService(TestCase):
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
 
+    # List test cases
+    def test_get_wishlist_list(self):
+        """It should Get a list of Wishlists"""
+        self._create_wishlists(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 5)
+
+    # Update test cases
     def test_update_wishlist(self):
         """It should Update an existing Wishlist"""
         # create a wishlist to update
@@ -70,3 +80,14 @@ class TestYourResourceService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_wishlist = response.get_json()
         self.assertEqual(updated_wishlist["category"], "unknown")
+
+    # Delete test cases
+    def test_delete_wishlist(self):
+        """It should Delete a Wishlist"""
+        test_wishlist = self._create_wishlists(1)[0]
+        response = self.client.delete(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response.data), 0)
+        # make sure they are deleted
+        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
