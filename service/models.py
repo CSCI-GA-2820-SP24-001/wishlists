@@ -136,8 +136,8 @@ class Wishlists(db.Model):
 
     @classmethod
     def all(cls):
-        """Returns all of the Wishlistss in the database"""
-        logger.info("Processing all Wishlistss")
+        """Returns all of the Wishlists in the database"""
+        logger.info("Processing all Wishlists")
         return cls.query.all()
 
     @classmethod
@@ -148,10 +148,10 @@ class Wishlists(db.Model):
 
     @classmethod
     def find_by_name(cls, name):
-        """Returns all Wishlistss with the given name
+        """Returns all Wishlists with the given name
 
         Args:
-            name (string): the name of the Wishlistss you want to match
+            name (string): the name of the Wishlists you want to match
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)

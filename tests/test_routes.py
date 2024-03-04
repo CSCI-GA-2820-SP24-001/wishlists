@@ -12,13 +12,15 @@ from service.models import db, Wishlists
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/wishlists
+BASE_URL = "/wishlists"
 
 
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+
+
 class TestYourResourceService(TestCase):
     """REST API Server Tests"""
 
@@ -57,6 +59,7 @@ class TestYourResourceService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # Test cases
+
     def test_get_wishlist_list(self):
         """It should Get a list of Wishlists"""
         self._create_wishlists(5)

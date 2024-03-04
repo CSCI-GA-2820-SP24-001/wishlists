@@ -43,7 +43,7 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-#: REST API code
+# REST API code
 
 
 @app.route("/wishlists", methods=["GET"])
@@ -57,11 +57,11 @@ def list_wishlists():
     category = request.args.get("category")
     name = request.args.get("name")
     if category:
-        wishlists = Wishlist.find_by_category(category)
+        wishlists = Wishlists.find_by_category(category)
     elif name:
-        wishlists = Wishlist.find_by_name(name)
+        wishlists = Wishlists.find_by_name(name)
     else:
-        wishlists = Wishlist.all()
+        wishlists = Wishlists.all()
 
     results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %d wishlists", len(results))
