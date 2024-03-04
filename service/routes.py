@@ -45,8 +45,8 @@ def index():
 ######################################################################
 
 
-# REST API codes
-@app.route("/items", methods=["POST", "GET"])
+# Create New Item
+@app.route("/items", methods=["POST"])
 def create_item():
     """
     Creates an Item
@@ -60,8 +60,9 @@ def create_item():
     items.deserialize(request.get_json())
     items.create()
     message = items.serialize()
-    location_url = url_for("get_item", item_id=items.id, _external=True)
-
+    # Todo: uncomment this code when get_item is implemented
+    # location_url = url_for("get_item", item_id=items.id, _external=True)
+    location_url = "unknown"
     app.logger.info("Item with ID: %d created.", items.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
