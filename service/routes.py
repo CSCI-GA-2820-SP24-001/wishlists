@@ -15,10 +15,10 @@
 ######################################################################
 
 """
-Pet Store Service
+Wishlist Store Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Pets from the inventory of pets in the PetShop
+and Delete Wishlists from the inventory of wishlists in the WishlistShop
 """
 
 from flask import jsonify, request, url_for, abort
@@ -43,4 +43,29 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# Todo: Place your REST API code here ...
+# REST API code
+
+
+@app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
+def update_wishlists(wishlist_id):
+    """
+    Update a Wishlist
+
+    This endpoint will update a Wishlist based the body that is posted
+    """
+    app.logger.info("Request to update wishlist with id: %d", wishlist_id)
+    check_content_type("application/json")
+
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        error(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id: '{wishlist_id}' was not found.",
+        )
+
+    wishlist.deserialize(request.get_json())
+    wishlist.id = wishlist_id
+    wishlist.update()
+
+    app.logger.info("Wishlist with ID: %d updated.", wishlist.id)
+    return jsonify(wishlist.serialize()), status.HTTP_200_OK
