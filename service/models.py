@@ -23,13 +23,99 @@ class Item(db.Model):
 
     __tablename__ = "items"
 
-    item_id = db.Column(
-        db.Integer, autoincrement=True, nullable=False, primary_key=True
-    )
+    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     item_name = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
-        return f"<Items {self.item_name} id=[{self.item_id}]>"
+        return f"<Item {self.item_name} id=[{self.id}]>"
+
+    def create(self):
+        """Creates an Item to the database"""
+        logger.info("Creating %s", self.item_name)
+        # id must be none to generate next primary key
+        self.id = None  # pylint: disable=invalid-name
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error("Error creating record: %s", self)
+            raise DataValidationError(e) from e
+
+    def update(self):
+        """
+        Updates a Item to the database
+        """
+        logger.info("Saving %s", self.item_name)
+        if not self.id:
+            raise DataValidationError("Update called with empty ID field")
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error("Error updating record: %s", self)
+            raise DataValidationError(e) from e
+
+    def delete(self):
+        """Removes a Item from the data store"""
+        logger.info("Deleting %s", self.item_name)
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error("Error deleting record: %s", self)
+            raise DataValidationError(e) from e
+
+    def serialize(self):
+        """Serializes a item into a dictionary"""
+        return {
+            "id": self.id,
+            "name": self.item_name,
+        }
+
+    def deserialize(self, data):
+        """
+        Deserializes a item from a dictionary
+        Args:
+            data (dict): A dictionary containing the item data
+        """
+        try:
+            self.id = data["id"]
+            self.item_name = data["name"]
+        except AttributeError as error:
+            raise DataValidationError("Invalid attribute: " + error.args[0]) from error
+        except KeyError as error:
+            raise DataValidationError(
+                "Invalid pet: missing " + error.args[0]
+            ) from error
+        except TypeError as error:
+            raise DataValidationError(
+                "Invalid item: body of request contained bad or no data " + str(error)
+            ) from error
+        return self
+
+    @classmethod
+    def find(cls, by_id):
+        """Finds a item by it's ID"""
+        logger.info("Processing lookup for id %s ...", by_id)
+        return cls.query.session.get(cls, by_id)
+
+    @classmethod
+    def all(cls):
+        """Returns all of the items in the database"""
+        logger.info("Processing all Wishlists")
+        return cls.query.all()
+
+    @classmethod
+    def find_by_name(cls, name):
+        """Returns all items with the given name
+
+        Args:
+            name (string): the name of the items you want to match
+        """
+        logger.info("Processing name query for %s ...", name)
+        return cls.query.filter(cls.name == name)
 
 
 class Wishlists(db.Model):

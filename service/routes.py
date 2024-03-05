@@ -23,10 +23,11 @@ and Delete Wishlists from the inventory of wishlists in the WishlistShop
 
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import Wishlists
+from service.models import Wishlists, Item
 from service.common import status  # HTTP Status Codes
 
 
+# app = app(__name__)
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -43,7 +44,27 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# REST API codes
+
+# Create New Item
+@app.route("/items", methods=["POST"])
+def create_item():
+    """
+    Creates an Item
+
+    This endpoint will create an Item based the data in the body that is posted
+    """
+    app.logger.info("Request to create an item")
+    check_content_type("application/json")
+
+    items = Item()
+    items.deserialize(request.get_json())
+    items.create()
+    message = items.serialize()
+    # Todo: uncomment this code when get_item is implemented
+    # location_url = url_for("get_item", item_id=items.id, _external=True)
+    location_url = "unknown"
+    app.logger.info("Item with ID: %d created.", items.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 # List wishlist
@@ -82,7 +103,7 @@ def update_wishlists(wishlist_id):
 
     wishlist = Wishlists.find(wishlist_id)
     if not wishlist:
-        error(
+        app.error(
             status.HTTP_404_NOT_FOUND,
             f"Wishlist with id: '{wishlist_id}' was not found.",
         )
@@ -111,3 +132,33 @@ def delete_wishlists(wishlist_id):
 
     app.logger.info("Wishlist with ID: %d delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
+
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+
+
+def check_content_type(content_type):
+    """Checks that the media type is correct"""
+    if "Content-Type" not in request.headers:
+        app.logger.error("No Content-Type specified.")
+        error(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {content_type}",
+        )
+
+    if request.headers["Content-Type"] == content_type:
+        return
+
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    error(
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        f"Content-Type must be {content_type}",
+    )
+
+
+def error(status_code, reason):
+    """Logs the error and then aborts"""
+    app.logger.error(reason)
+    abort(status_code, reason)
