@@ -86,15 +86,15 @@ class TestYourResourceService(TestCase):
 
         # Todo: Uncomment this code when get_wishlists is implemented
         ## Check that the location header was correct
-        #response = self.client.get(location)
-        #self.assertEqual(response.status_code, status.HTTP_200_OK)
-        #new_wishlist = response.get_json()
-        #self.assertEqual(new_wishlist["user_id"], test_wishlist.user_id)
-        #self.assertEqual(new_wishlist["title"], test_wishlist.title)
-        #self.assertEqual(new_wishlist["description"], test_wishlist.description)
-        #self.assertEqual(new_wishlist["items"], test_wishlist.items)
-        #self.assertEqual(new_wishlist["count"], test_wishlist.count)
-        #self.assertEqual(new_wishlist["date"], test_wishlist.date)
+        # response = self.client.get(location)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # new_wishlist = response.get_json()
+        # self.assertEqual(new_wishlist["user_id"], test_wishlist.user_id)
+        # self.assertEqual(new_wishlist["title"], test_wishlist.title)
+        # self.assertEqual(new_wishlist["description"], test_wishlist.description)
+        # self.assertEqual(new_wishlist["items"], test_wishlist.items)
+        # self.assertEqual(new_wishlist["count"], test_wishlist.count)
+        # self.assertEqual(new_wishlist["date"], test_wishlist.date)
 
     # Update test cases
     def test_update_wishlist(self):
@@ -147,3 +147,13 @@ class TestYourResourceService(TestCase):
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # read test case
+    def test_get_wishlist(self):
+        """It should Get a single Wishlist"""
+        # get the id of a wishlist
+        test_wishlist = self._create_wishlists(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], test_wishlist.name)
