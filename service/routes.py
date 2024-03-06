@@ -66,6 +66,28 @@ def create_item():
     app.logger.info("Item with ID: %d created.", items.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
+# Create wishlist
+@app.route("/wishlists", methods=["POST"])
+def create_wishlists():
+    """
+    Creates a Wishlist
+
+    This endpoint will create a Wishlist based the data in the body that is posted
+    """
+    app.logger.info("Request to create a wishlist")
+    check_content_type("application/json")
+
+    wishlist = Wishlists()
+    wishlist.deserialize(request.get_json())
+    wishlist.create()
+    message = wishlist.serialize()
+    # Todo: uncomment this code when get_wishlists is implemented
+    #location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
+    location_url = "unknown"
+
+    app.logger.info("Wishlists with ID: %d created.", wishlist.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+
 
 # List wishlist
 @app.route("/wishlists", methods=["GET"])
