@@ -91,3 +91,13 @@ class TestYourResourceService(TestCase):
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # read test case
+    def test_get_wishlist(self):
+        """It should Get a single Wishlist"""
+        # get the id of a wishlist
+        test_wishlist = self._create_wishlists(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], test_wishlist.name)
