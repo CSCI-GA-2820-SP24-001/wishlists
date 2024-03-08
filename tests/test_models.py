@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.models import Wishlists, Item, db
-from .factories import ItemFactory, WishlistsFactory
+from .factories import ItemsFactory, WishlistsFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -98,7 +98,7 @@ class TestItems(TestCase):
 
     def test_create_item(self):
         """It should create an item"""
-        items = ItemFactory()
+        items = ItemsFactory()
         items.create()
         # self.assertIsNotNone(items.id)
         found = Item.all()
@@ -113,11 +113,27 @@ class TestItems(TestCase):
         item.create()
         self.assertTrue(item is not None)
 
+    #        '''It should Create an item and assert that it exists'''
+    #         item = Item(item_name="sponge")
+    #         item.create()
+    # self.assertEqual(str(item), "<New Item id=[None]>")
+    # self.assertTrue(item is not None)
+    # self.assertEqual(item.id, None)
+    # self.assertEqual(item.item_name, "sponge")
 
-#        '''It should Create an item and assert that it exists'''
-#         item = Item(item_name="sponge")
-#         item.create()
-# self.assertEqual(str(item), "<New Item id=[None]>")
-# self.assertTrue(item is not None)
-# self.assertEqual(item.id, None)
-# self.assertEqual(item.item_name, "sponge")
+    def test_serialize_an_item(self):
+        """It should serialize an Address"""
+        item = ItemsFactory()
+        serial_item = item.serialize()
+        self.assertEqual(serial_item["id"], item.id)
+        # self.assertEqual(serial_item["wishlist_id"], item.wishlist_id)
+        self.assertEqual(serial_item["name"], item.name)
+
+    def test_deserialize_an_address(self):
+        """It should deserialize an item"""
+        item = ItemsFactory()
+        item.create()
+        new_item = item()
+        new_item.deserialize(item.serialize())
+        self.assertEqual(new_item.id, item.id)
+        self.assertEqual(new_item.name, item.name)

@@ -25,9 +25,15 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     item_name = db.Column(db.String(63), nullable=False)
+    wishlist_id = db.Column(
+        db.Integer, db.ForeignKey("wishlists.id", ondelete="CASCADE"), nullable=False
+    )
 
     def __repr__(self):
         return f"<Item {self.item_name} id=[{self.id}]>"
+
+    def __str__(self):
+        return f"{self.id}: {self.item_name}"
 
     def create(self):
         """Creates an Item to the database"""
@@ -131,7 +137,7 @@ class Wishlists(db.Model):
     user_id = db.Column(db.String(63), nullable=False)
     title = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(250), nullable=False)
-    items = db.Column(db.PickleType, nullable=False)
+    items = db.relationship("Item", backref="wishlist", passive_deletes=True)
     count = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date(), nullable=False, default=date.today())
 
@@ -177,15 +183,19 @@ class Wishlists(db.Model):
 
     def serialize(self):
         """Serializes a Wishlists into a dictionary"""
-        return {
+        wishlist = {
             "id": self.id,
             "user_id": self.user_id,
             "title": self.title,
             "description": self.description,
-            "items": self.items,
+            # "items": self.items,
             "count": self.count,
             "date": self.date.isoformat(),
+            "items": [],
         }
+        for item in self.items:
+            wishlist["items"].append(item.serialize())
+        return wishlist
 
     def deserialize(self, data):
         """
@@ -198,11 +208,15 @@ class Wishlists(db.Model):
             self.id = data["id"]
             self.user_id = data["user_id"]
             self.title = data["title"]
-            self.items = data["items"]
+            # self.items = data["items"]
             self.description = data["description"]
             self.count = getattr("count", data["count"])
             self.date = date.fromisoformat(data["date"])
-
+            item_list = data.get("items")
+            for json_item in item_list:
+                item = Item()
+                item.deserialize(json_item)
+                self.items.append(item)
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:

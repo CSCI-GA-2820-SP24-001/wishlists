@@ -66,6 +66,7 @@ def create_item():
     app.logger.info("Item with ID: %d created.", items.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
+
 # Create wishlist
 @app.route("/wishlists", methods=["POST"])
 def create_wishlists():
@@ -82,7 +83,7 @@ def create_wishlists():
     wishlist.create()
     message = wishlist.serialize()
     # Todo: uncomment this code when get_wishlists is implemented
-    #location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
+    # location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
     location_url = "unknown"
 
     app.logger.info("Wishlists with ID: %d created.", wishlist.id)
@@ -154,6 +155,38 @@ def delete_wishlists(wishlist_id):
 
     app.logger.info("Wishlist with ID: %d delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
+
+
+@app.route("/items/<int:wishlist_id>/items", methods=["POST"])
+def create_items(wishlist_id):
+    """
+    Create an item on a wishlist
+
+    This endpoint will add an item to a wishlist
+    """
+    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
+    check_content_type("application/json")
+
+    # See if the account exists and abort if it doesn't
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{wishlist_id}' could not be found.",
+        )
+
+    # Create an address from the json data
+    item = Item()
+    item.deserialize(request.get_json())
+
+    # Append the address to the account
+    wishlist.items.append(item)
+    wishlist.update()
+
+    # Prepare a message to return
+    message = item.serialize()
+
+    return jsonify(message), status.HTTP_201_CREATED
 
 
 ######################################################################
