@@ -101,11 +101,11 @@ class Item(db.Model):
             ) from error
         return self
 
-    @classmethod
-    def find(cls, by_id):
-        """Finds a item by it's ID"""
-        logger.info("Processing lookup for id %s ...", by_id)
-        return cls.query.session.get(cls, by_id)
+    # @classmethod
+    # def find(cls, by_id):
+    #     """Finds a item by it's ID"""
+    #     logger.info("Processing lookup for id %s ...", by_id)
+    #     return cls.query.session.get(cls, by_id)
 
     @classmethod
     def all(cls):
@@ -113,15 +113,15 @@ class Item(db.Model):
         logger.info("Processing all Wishlists")
         return cls.query.all()
 
-    @classmethod
-    def find_by_name(cls, name):
-        """Returns all items with the given name
+    # @classmethod
+    # def find_by_name(cls, name):
+    #     """Returns all items with the given name
 
-        Args:
-            name (string): the name of the items you want to match
-        """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+    #     Args:
+    #         name (string): the name of the items you want to match
+    #     """
+    #     logger.info("Processing name query for %s ...", name)
+    #     return cls.query.filter(cls.name == name)
 
 
 class Wishlists(db.Model):
@@ -133,16 +133,13 @@ class Wishlists(db.Model):
     ##################################################
     # Table Schema
     ##################################################
-    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(63), nullable=False)
     title = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(250), nullable=False)
     items = db.relationship("Item", backref="wishlist", passive_deletes=True)
     count = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date(), nullable=False, default=date.today())
-
-    def __repr__(self):
-        return f"<Wishlists {self.title} id=[{self.id}]>"
 
     def create(self):
         """

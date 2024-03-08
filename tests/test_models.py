@@ -101,17 +101,31 @@ class TestItems(TestCase):
         items = ItemsFactory()
         items.create()
         # self.assertIsNotNone(items.id)
-        found = Item.all()
+        found = items.all()
+        print(found)
         self.assertEqual(len(found), 1)
         # data = Item.find(items.id)
         # self.assertEqual(data.id, items.id)
         # self.assertEqual(data.item_name, items.item_name)
 
-    def test_create_new_item(self):
-        """this should create an item and assert that it exists"""
-        item = Item(item_name="sponge")
-        item.create()
-        self.assertTrue(item is not None)
+    # def test_create_new_item(self):
+    #     """this should create an item and assert that it exists"""
+    #     item = Item(item_name="sponge")
+    #     item.create()
+    #     self.assertTrue(item is not None)
+
+    def test_add_wishlist_item(self):
+        """It should Create an account with an item and add it to the database"""
+        # wishlists = Item()
+        # self.assertIsNotNone(wishlists)
+        wishlist = WishlistsFactory()
+        item = ItemsFactory(wishlist_id=wishlist)
+        wishlist.items.append(item)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlists.all()
+        self.assertEqual(len(wishlists), 1)
 
     #        '''It should Create an item and assert that it exists'''
     #         item = Item(item_name="sponge")
@@ -122,18 +136,18 @@ class TestItems(TestCase):
     # self.assertEqual(item.item_name, "sponge")
 
     def test_serialize_an_item(self):
-        """It should serialize an Address"""
+        """It should serialize an item"""
         item = ItemsFactory()
         serial_item = item.serialize()
         self.assertEqual(serial_item["id"], item.id)
         # self.assertEqual(serial_item["wishlist_id"], item.wishlist_id)
-        self.assertEqual(serial_item["name"], item.name)
+        self.assertEqual(serial_item["name"], item.item_name)
 
-    def test_deserialize_an_address(self):
+    def test_deserialize_an_item(self):
         """It should deserialize an item"""
         item = ItemsFactory()
         item.create()
-        new_item = item()
+        new_item = Item()
         new_item.deserialize(item.serialize())
         self.assertEqual(new_item.id, item.id)
-        self.assertEqual(new_item.name, item.name)
+        self.assertEqual(new_item.item_name, item.item_name)
