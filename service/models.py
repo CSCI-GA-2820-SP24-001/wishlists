@@ -207,7 +207,7 @@ class Wishlists(db.Model):
             self.title = data["title"]
             # self.items = data["items"]
             self.description = data["description"]
-            self.count = getattr("count", data["count"])
+            self.count = data["count"]
             self.date = date.fromisoformat(data["date"])
             item_list = data.get("items")
             for json_item in item_list:

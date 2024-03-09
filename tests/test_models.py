@@ -120,7 +120,7 @@ class TestItems(TestCase):
         # wishlists = Item()
         # self.assertIsNotNone(wishlists)
         wishlist = WishlistsFactory()
-        item = ItemsFactory(wishlist_id=wishlist)
+        item = ItemsFactory(wishlist=wishlist)
         wishlist.items.append(item)
         wishlist.create()
         # Assert that it was assigned an id and shows up in the database

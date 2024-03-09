@@ -3,9 +3,12 @@ Test Factory to make fake objects for testing
 """
 
 from datetime import date
+from factory import Faker
 import factory
 from factory.fuzzy import FuzzyDate, FuzzyInteger, FuzzyText
 from service.models import Wishlists, Item
+
+fake = Faker()
 
 
 class WishlistsFactory(factory.Factory):
@@ -18,8 +21,8 @@ class WishlistsFactory(factory.Factory):
 
     id = factory.Sequence(lambda n: n)
     user_id = factory.Sequence(lambda n: n)
-    title = FuzzyText(length=63)
-    description = FuzzyText(length=250)
+    title = Faker("lorem")
+    description = Faker("lorem")
     count = FuzzyInteger(0, 50, step=1)
     date = FuzzyDate(date(2008, 1, 1))
     # items = FuzzyChoice(choices=[ItemFactory() for _ in range(50)])
