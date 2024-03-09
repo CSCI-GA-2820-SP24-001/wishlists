@@ -8,7 +8,7 @@ from unittest import TestCase
 from wsgi import app
 from service.common import status
 from service.models import db, Wishlists
-from tests.factories import WishlistsFactory, ItemFactory
+from tests.factories import WishlistsFactory, ItemsFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -23,7 +23,7 @@ ITEM_URL = "/items"
 # pylint: disable=too-many-public-methods
 
 
-class TestYourResourceService(TestCase):
+class TestWishlists(TestCase):
     """REST API Server Tests"""
 
     @classmethod
@@ -50,6 +50,39 @@ class TestYourResourceService(TestCase):
     def tearDown(self):
         """This runs after each test"""
         db.session.remove()
+
+    def _create_wishlists(self, count):
+        """Factory method to create wishlists in bulk"""
+        wishlists = []
+        for _ in range(count):
+            test_wishlist = WishlistsFactory()
+            response = self.client.post(BASE_URL, json=test_wishlist.serialize())
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_201_CREATED,
+                "Could not create test wishlists",
+            )
+            new_wishlist = response.get_json()
+            test_wishlist.id = new_wishlist["id"]
+            wishlists.append(test_wishlist)
+        return wishlists
+
+    ##to do: create item test
+    # def _create_pets(self, count):
+    #     """Factory method to create pets in bulk"""
+    #     pets = []
+    #     for _ in range(count):
+    #         test_pet = PetFactory()
+    #         response = self.client.post(BASE_URL, json=test_pet.serialize())
+    #         self.assertEqual(
+    #             response.status_code,
+    #             status.HTTP_201_CREATED,
+    #             "Could not create test pet",
+    #         )
+    #         new_pet = response.get_json()
+    #         test_pet.id = new_pet["id"]
+    #         pets.append(test_pet)
+    #     return pets
 
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
@@ -117,7 +150,7 @@ class TestYourResourceService(TestCase):
 
     def test_create_item(self):
         """It should Create a new item"""
-        test_item = ItemFactory()
+        test_item = ItemsFactory()
         logging.debug("Test Item: %s", test_item.serialize())
         response = self.client.post(ITEM_URL, json=test_item.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

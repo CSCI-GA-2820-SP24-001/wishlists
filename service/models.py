@@ -25,9 +25,15 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     item_name = db.Column(db.String(63), nullable=False)
+    wishlist_id = db.Column(
+        db.Integer, db.ForeignKey("wishlists.id", ondelete="CASCADE"), nullable=False
+    )
 
     def __repr__(self):
         return f"<Item {self.item_name} id=[{self.id}]>"
+
+    def __str__(self):
+        return f"{self.id}: {self.item_name}"
 
     def create(self):
         """Creates an Item to the database"""
@@ -95,11 +101,11 @@ class Item(db.Model):
             ) from error
         return self
 
-    @classmethod
-    def find(cls, by_id):
-        """Finds a item by it's ID"""
-        logger.info("Processing lookup for id %s ...", by_id)
-        return cls.query.session.get(cls, by_id)
+    # @classmethod
+    # def find(cls, by_id):
+    #     """Finds a item by it's ID"""
+    #     logger.info("Processing lookup for id %s ...", by_id)
+    #     return cls.query.session.get(cls, by_id)
 
     @classmethod
     def all(cls):
@@ -107,15 +113,15 @@ class Item(db.Model):
         logger.info("Processing all Wishlists")
         return cls.query.all()
 
-    @classmethod
-    def find_by_name(cls, name):
-        """Returns all items with the given name
+    # @classmethod
+    # def find_by_name(cls, name):
+    #     """Returns all items with the given name
 
-        Args:
-            name (string): the name of the items you want to match
-        """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+    #     Args:
+    #         name (string): the name of the items you want to match
+    #     """
+    #     logger.info("Processing name query for %s ...", name)
+    #     return cls.query.filter(cls.name == name)
 
 
 class Wishlists(db.Model):
@@ -127,16 +133,13 @@ class Wishlists(db.Model):
     ##################################################
     # Table Schema
     ##################################################
-    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(63), nullable=False)
     title = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(250), nullable=False)
-    items = db.Column(db.PickleType, nullable=False)
+    items = db.relationship("Item", backref="wishlist", passive_deletes=True)
     count = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date(), nullable=False, default=date.today())
-
-    def __repr__(self):
-        return f"<Wishlists {self.title} id=[{self.id}]>"
 
     def create(self):
         """
@@ -177,15 +180,19 @@ class Wishlists(db.Model):
 
     def serialize(self):
         """Serializes a Wishlists into a dictionary"""
-        return {
+        wishlist = {
             "id": self.id,
             "user_id": self.user_id,
             "title": self.title,
             "description": self.description,
-            "items": self.items,
+            # "items": self.items,
             "count": self.count,
             "date": self.date.isoformat(),
+            "items": [],
         }
+        for item in self.items:
+            wishlist["items"].append(item.serialize())
+        return wishlist
 
     def deserialize(self, data):
         """
@@ -198,11 +205,15 @@ class Wishlists(db.Model):
             self.id = data["id"]
             self.user_id = data["user_id"]
             self.title = data["title"]
-            self.items = data["items"]
+            # self.items = data["items"]
             self.description = data["description"]
             self.count = getattr("count", data["count"])
             self.date = date.fromisoformat(data["date"])
-
+            item_list = data.get("items")
+            for json_item in item_list:
+                item = Item()
+                item.deserialize(json_item)
+                self.items.append(item)
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:

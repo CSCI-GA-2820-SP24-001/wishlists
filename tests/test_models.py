@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.models import Wishlists, Item, db
-from .factories import ItemFactory, WishlistsFactory
+from .factories import ItemsFactory, WishlistsFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -49,21 +49,22 @@ class TestWishlists(TestCase):
     ######################################################################
 
     def test_create_wishlist(self):
-        """It should create a Wishlists"""
-        wishlist = WishlistsFactory()
-        wishlist.create()
-        self.assertIsNotNone(wishlist.id)
-        found = Wishlists.all()
-        self.assertEqual(len(found), 1)
-        data = Wishlists.find(wishlist.id)
-        self.assertEqual(data.id, wishlist.id)
-        self.assertEqual(data.user_id, wishlist.user_id)
-        self.assertEqual(data.title, wishlist.title)
-        self.assertEqual(data.description, wishlist.description)
-        self.assertEqual(data.count, wishlist.count)
-        self.assertEqual(data.date, wishlist.date)
-
-        return self
+        """It should Create an Account and assert that it exists"""
+        fake_wishlist = WishlistsFactory()
+        # pylint: disable=unexpected-keyword-arg
+        wishlist = Wishlists(
+            title=fake_wishlist.title,
+            description=fake_wishlist.description,
+            items=fake_wishlist.items,
+            date=fake_wishlist.date,
+            count=fake_wishlist.count,
+        )
+        self.assertIsNotNone(wishlist)
+        self.assertEqual(wishlist.id, None)
+        self.assertEqual(wishlist.title, fake_wishlist.title)
+        self.assertEqual(wishlist.description, fake_wishlist.description)
+        self.assertEqual(wishlist.count, fake_wishlist.count)
+        self.assertEqual(wishlist.date, fake_wishlist.date)
 
 
 class TestItems(TestCase):
@@ -98,26 +99,56 @@ class TestItems(TestCase):
 
     def test_create_item(self):
         """It should create an item"""
-        items = ItemFactory()
+        items = ItemsFactory()
         items.create()
         # self.assertIsNotNone(items.id)
-        found = Item.all()
+        found = items.all()
+        print(found)
         self.assertEqual(len(found), 1)
         # data = Item.find(items.id)
         # self.assertEqual(data.id, items.id)
         # self.assertEqual(data.item_name, items.item_name)
 
-    def test_create_new_item(self):
-        """this should create an item and assert that it exists"""
-        item = Item(item_name="sponge")
+    # def test_create_new_item(self):
+    #     """this should create an item and assert that it exists"""
+    #     item = Item(item_name="sponge")
+    #     item.create()
+    #     self.assertTrue(item is not None)
+
+    def test_add_wishlist_item(self):
+        """It should Create an account with an item and add it to the database"""
+        # wishlists = Item()
+        # self.assertIsNotNone(wishlists)
+        wishlist = WishlistsFactory()
+        item = ItemsFactory(wishlist_id=wishlist)
+        wishlist.items.append(item)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlists.all()
+        self.assertNotEqual(len(wishlists), 0)
+
+    #        '''It should Create an item and assert that it exists'''
+    #         item = Item(item_name="sponge")
+    #         item.create()
+    # self.assertEqual(str(item), "<New Item id=[None]>")
+    # self.assertTrue(item is not None)
+    # self.assertEqual(item.id, None)
+    # self.assertEqual(item.item_name, "sponge")
+
+    def test_serialize_an_item(self):
+        """It should serialize an item"""
+        item = ItemsFactory()
+        serial_item = item.serialize()
+        self.assertEqual(serial_item["id"], item.id)
+        # self.assertEqual(serial_item["wishlist_id"], item.wishlist_id)
+        self.assertEqual(serial_item["name"], item.item_name)
+
+    def test_deserialize_an_item(self):
+        """It should deserialize an item"""
+        item = ItemsFactory()
         item.create()
-        self.assertTrue(item is not None)
-
-
-#        '''It should Create an item and assert that it exists'''
-#         item = Item(item_name="sponge")
-#         item.create()
-# self.assertEqual(str(item), "<New Item id=[None]>")
-# self.assertTrue(item is not None)
-# self.assertEqual(item.id, None)
-# self.assertEqual(item.item_name, "sponge")
+        new_item = Item()
+        new_item.deserialize(item.serialize())
+        self.assertEqual(new_item.id, item.id)
+        self.assertEqual(new_item.item_name, item.item_name)

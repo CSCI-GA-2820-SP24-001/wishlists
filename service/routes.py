@@ -157,6 +157,38 @@ def delete_wishlists(wishlist_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
+@app.route("/items/<int:wishlist_id>/items", methods=["POST"])
+def create_items(wishlist_id):
+    """
+    Create an item on a wishlist
+
+    This endpoint will add an item to a wishlist
+    """
+    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
+    check_content_type("application/json")
+
+    # See if the account exists and abort if it doesn't
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{wishlist_id}' could not be found.",
+        )
+
+    # Create an address from the json data
+    item = Item()
+    item.deserialize(request.get_json())
+
+    # Append the address to the account
+    wishlist.items.append(item)
+    wishlist.update()
+
+    # Prepare a message to return
+    message = item.serialize()
+
+    return jsonify(message), status.HTTP_201_CREATED
+
+
 ######################################################################
 # READ A WISHLIST
 ######################################################################
