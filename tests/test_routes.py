@@ -162,13 +162,12 @@ class TestWishlists(TestCase):
         self.assertEqual(len(new_wishlist.items), 2)
         self.assertEqual(new_wishlist.items[1].item_name, wl2.item_name)
 
-        # new_account = Account.find(account.id)
-        # self.assertEqual(new_account.addresses[0].name, address.name)
-
-        # address2 = AddressFactory(account=account)
-        # account.addresses.append(address2)
-        # account.update()
-
-        # new_account = Account.find(account.id)
-        # self.assertEqual(len(new_account.addresses), 2)
-        # self.assertEqual(new_account.addresses[1].name, address2.name)
+    # read test case
+    def test_get_wishlist(self):
+        """It should Get a single Wishlist"""
+        # get the id of a wishlist
+        test_wishlist = self._create_wishlists(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["title"], test_wishlist.title)

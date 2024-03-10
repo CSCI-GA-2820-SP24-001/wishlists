@@ -190,6 +190,29 @@ def create_items(wishlist_id):
 
 
 ######################################################################
+# READ A WISHLIST
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
+def get_wishlists(wishlist_id):
+    """
+    Retrieve a single Wishlists
+
+    This endpoint will return a Wishlists based on it's id
+    """
+    app.logger.info("Request for wishlist with id: %s", wishlist_id)
+
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        error(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlists with id '{wishlist_id}' was not found.",
+        )
+
+    app.logger.info("Returning wishlist: %s", wishlist.title)
+    return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
