@@ -8,9 +8,11 @@ import factory
 from factory.fuzzy import FuzzyDate, FuzzyInteger, FuzzyText
 from service.models import Wishlists, Item
 
-fake = Faker()
+# fake = Faker()
+# fake.add_provider(lorem)
 
 
+# fake.add_provider(lorem)
 class WishlistsFactory(factory.Factory):
     """Creates wishlists"""
 
@@ -21,8 +23,8 @@ class WishlistsFactory(factory.Factory):
 
     id = factory.Sequence(lambda n: n)
     user_id = factory.Sequence(lambda n: n)
-    title = Faker("lorem")
-    description = Faker("lorem")
+    title = Faker("name")
+    description = Faker("sentence", nb_words=25)
     count = FuzzyInteger(0, 50, step=1)
     date = FuzzyDate(date(2008, 1, 1))
     # items = FuzzyChoice(choices=[ItemFactory() for _ in range(50)])

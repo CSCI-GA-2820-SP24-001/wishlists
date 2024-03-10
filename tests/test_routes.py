@@ -115,7 +115,7 @@ class TestWishlists(TestCase):
         self.assertEqual(new_wishlist["description"], test_wishlist.description)
         self.assertEqual(new_wishlist["items"], test_wishlist.items)
         self.assertEqual(new_wishlist["count"], test_wishlist.count)
-        self.assertEqual(new_wishlist["date"], test_wishlist.date)
+        self.assertEqual(new_wishlist["date"], str(test_wishlist.date))
 
         # Todo: Uncomment this code when get_wishlists is implemented
         ## Check that the location header was correct
