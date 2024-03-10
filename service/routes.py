@@ -208,7 +208,7 @@ def get_wishlists(wishlist_id):
             f"Wishlists with id '{wishlist_id}' was not found.",
         )
 
-    app.logger.info("Returning wishlist: %s", wishlist.name)
+    app.logger.info("Returning wishlist: %s", wishlist.title)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
 
 

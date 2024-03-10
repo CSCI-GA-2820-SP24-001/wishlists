@@ -87,7 +87,7 @@ class Item(db.Model):
             data (dict): A dictionary containing the item data
         """
         try:
-            self.id = data["id"]
+            # self.id = data["id"]
             self.item_name = data["name"]
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
@@ -134,7 +134,7 @@ class Wishlists(db.Model):
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(63), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(250), nullable=False)
     items = db.relationship("Item", backref="wishlist", passive_deletes=True)
@@ -202,12 +202,12 @@ class Wishlists(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.id = data["id"]
+            # self.id = data["id"]
             self.user_id = data["user_id"]
             self.title = data["title"]
             # self.items = data["items"]
             self.description = data["description"]
-            self.count = getattr("count", data["count"])
+            self.count = data["count"]
             self.date = date.fromisoformat(data["date"])
             item_list = data.get("items")
             for json_item in item_list:

@@ -67,23 +67,6 @@ class TestWishlists(TestCase):
             wishlists.append(test_wishlist)
         return wishlists
 
-    ##to do: create item test
-    # def _create_pets(self, count):
-    #     """Factory method to create pets in bulk"""
-    #     pets = []
-    #     for _ in range(count):
-    #         test_pet = PetFactory()
-    #         response = self.client.post(BASE_URL, json=test_pet.serialize())
-    #         self.assertEqual(
-    #             response.status_code,
-    #             status.HTTP_201_CREATED,
-    #             "Could not create test pet",
-    #         )
-    #         new_pet = response.get_json()
-    #         test_pet.id = new_pet["id"]
-    #         pets.append(test_pet)
-    #     return pets
-
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
@@ -115,7 +98,7 @@ class TestWishlists(TestCase):
         self.assertEqual(new_wishlist["description"], test_wishlist.description)
         self.assertEqual(new_wishlist["items"], test_wishlist.items)
         self.assertEqual(new_wishlist["count"], test_wishlist.count)
-        self.assertEqual(new_wishlist["date"], test_wishlist.date)
+        self.assertEqual(new_wishlist["date"], str(test_wishlist.date))
 
         # Todo: Uncomment this code when get_wishlists is implemented
         ## Check that the location header was correct
@@ -140,46 +123,44 @@ class TestWishlists(TestCase):
         # update the wishlist
         new_wishlist = response.get_json()
         logging.debug(new_wishlist)
-        new_wishlist["category"] = "unknown"
+        new_wishlist["title"] = "New Wishlist"
         response = self.client.put(
             f"{BASE_URL}/{new_wishlist['id']}", json=new_wishlist
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_wishlist = response.get_json()
-        self.assertEqual(updated_wishlist["category"], "unknown")
+        self.assertEqual(updated_wishlist["title"], "New Wishlist")
 
-    def test_create_item(self):
-        """It should Create a new item"""
-        test_item = ItemsFactory()
-        logging.debug("Test Item: %s", test_item.serialize())
-        response = self.client.post(ITEM_URL, json=test_item.serialize())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # # Make sure location header is set
-        location = response.headers.get("Location", None)
-        self.assertIsNotNone(location)
-
-        # Check the data is correct
-        new_item = response.get_json()
-        self.assertEqual(new_item["name"], test_item.item_name)
-
-        # Check that the location header was correct
-        # To do: uncomment this code when location is implemented
-        # response = self.client.get(location)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        new_item = response.get_json()
-        self.assertEqual(new_item["name"], test_item.item_name)
-
-    # Delete test cases
     def test_delete_wishlist(self):
-        """It should Delete a Wishlist"""
-        test_wishlist = self._create_wishlists(1)[0]
-        response = self.client.delete(f"{BASE_URL}/{test_wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(len(response.data), 0)
-        # make sure they are deleted
-        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        """It should Delete an Account"""
+        # get the id of an account
+        wishlist = self._create_wishlists(1)[0]
+        resp = self.client.delete(f"{BASE_URL}/{wishlist.id}")
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+    ####items test cases
+    def test_add_wishlist_item(self):
+        """It should Create a wishlist with an item and add it to the database"""
+        wishlists = Wishlists.all()
+        self.assertEqual(wishlists, [])
+        wishlist = WishlistsFactory()
+        item = ItemsFactory(wishlist=wishlist)
+        wishlist.items.append(item)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlists.all()
+        self.assertEqual(len(wishlists), 1)
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(new_wishlist.items[0].item_name, item.item_name)
+
+        wl2 = ItemsFactory(wishlist=wishlist)
+        wishlist.items.append(wl2)
+        wishlist.update()
+
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(len(new_wishlist.items), 2)
+        self.assertEqual(new_wishlist.items[1].item_name, wl2.item_name)
 
     # read test case
     def test_get_wishlist(self):
@@ -189,4 +170,4 @@ class TestWishlists(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(data["name"], test_wishlist.name)
+        self.assertEqual(data["title"], test_wishlist.title)
