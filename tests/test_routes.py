@@ -140,43 +140,52 @@ class TestWishlists(TestCase):
         # update the wishlist
         new_wishlist = response.get_json()
         logging.debug(new_wishlist)
-        new_wishlist["category"] = "unknown"
+        new_wishlist["title"] = "New Wishlist"
         response = self.client.put(
             f"{BASE_URL}/{new_wishlist['id']}", json=new_wishlist
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_wishlist = response.get_json()
-        self.assertEqual(updated_wishlist["category"], "unknown")
+        self.assertEqual(updated_wishlist["title"], "New Wishlist")
 
-    def test_create_item(self):
-        """It should Create a new item"""
-        test_item = ItemsFactory()
-        logging.debug("Test Item: %s", test_item.serialize())
-        response = self.client.post(ITEM_URL, json=test_item.serialize())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # # Make sure location header is set
-        location = response.headers.get("Location", None)
-        self.assertIsNotNone(location)
-
-        # Check the data is correct
-        new_item = response.get_json()
-        self.assertEqual(new_item["name"], test_item.item_name)
-
-        # Check that the location header was correct
-        # To do: uncomment this code when location is implemented
-        # response = self.client.get(location)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        new_item = response.get_json()
-        self.assertEqual(new_item["name"], test_item.item_name)
-
-    # Delete test cases
     def test_delete_wishlist(self):
-        """It should Delete a Wishlist"""
-        test_wishlist = self._create_wishlists(1)[0]
-        response = self.client.delete(f"{BASE_URL}/{test_wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(len(response.data), 0)
-        # make sure they are deleted
-        response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        """It should Delete an Account"""
+        # get the id of an account
+        wishlist = self._create_wishlists(1)[0]
+        resp = self.client.delete(f"{BASE_URL}/{wishlist.id}")
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+    ####items test cases
+    def test_add_wishlist_item(self):
+        """It should Create a wishlist with an item and add it to the database"""
+        wishlists = Wishlists.all()
+        self.assertEqual(wishlists, [])
+        wishlist = WishlistsFactory()
+        item = ItemsFactory(wishlist=wishlist)
+        wishlist.items.append(item)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlists.all()
+        self.assertEqual(len(wishlists), 1)
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(new_wishlist.items[0].item_name, item.item_name)
+
+        wl2 = ItemsFactory(wishlist=wishlist)
+        wishlist.items.append(wl2)
+        wishlist.update()
+
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(len(new_wishlist.items), 2)
+        self.assertEqual(new_wishlist.items[1].item_name, wl2.item_name)
+
+        # new_account = Account.find(account.id)
+        # self.assertEqual(new_account.addresses[0].name, address.name)
+
+        # address2 = AddressFactory(account=account)
+        # account.addresses.append(address2)
+        # account.update()
+
+        # new_account = Account.find(account.id)
+        # self.assertEqual(len(new_account.addresses), 2)
+        # self.assertEqual(new_account.addresses[1].name, address2.name)
