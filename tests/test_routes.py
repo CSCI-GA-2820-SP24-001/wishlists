@@ -67,23 +67,6 @@ class TestWishlists(TestCase):
             wishlists.append(test_wishlist)
         return wishlists
 
-    ##to do: create item test
-    # def _create_pets(self, count):
-    #     """Factory method to create pets in bulk"""
-    #     pets = []
-    #     for _ in range(count):
-    #         test_pet = PetFactory()
-    #         response = self.client.post(BASE_URL, json=test_pet.serialize())
-    #         self.assertEqual(
-    #             response.status_code,
-    #             status.HTTP_201_CREATED,
-    #             "Could not create test pet",
-    #         )
-    #         new_pet = response.get_json()
-    #         test_pet.id = new_pet["id"]
-    #         pets.append(test_pet)
-    #     return pets
-
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
