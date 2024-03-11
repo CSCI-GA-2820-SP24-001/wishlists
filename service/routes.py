@@ -67,6 +67,39 @@ def create_item():
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
+# Create an item on wishlist
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["POST"])
+def create_wishlist_items(wishlist_id):
+    """
+    Create an item on a wishlist
+
+    This endpoint will add an item to a wishlist
+    """
+    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
+    check_content_type("application/json")
+
+    # See if the account exists and abort if it doesn't
+    wishlist = Wishlists.find(wishlist_id)
+    if not wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{wishlist_id}' could not be found.",
+        )
+
+    # Create an address from the json data
+    item = Item()
+    item.deserialize(request.get_json())
+
+    # Append the address to the account
+    wishlist.items.append(item)
+    wishlist.update()
+
+    # Prepare a message to return
+    message = item.serialize()
+
+    return jsonify(message), status.HTTP_201_CREATED
+
+
 # Create wishlist
 @app.route("/wishlists", methods=["POST"])
 def create_wishlists():
@@ -136,6 +169,35 @@ def list_wishlists():
     return jsonify(results), status.HTTP_200_OK
 
 
+# Update an item
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
+def update_item(wishlist_id, item_id):
+    """
+    Update an item
+
+    This endpoint will update an item based the body that is posted
+    """
+    app.logger.info(
+        "Request to update Item %s for Wishlist id: %s", (item_id, wishlist_id)
+    )
+    check_content_type("application/json")
+
+    # See if the address exists and abort if it doesn't
+    item = Item.find(item_id)
+    if not item:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{item_id}' could not be found.",
+        )
+
+    # Update from the json in the body of the request
+    item.deserialize(request.get_json())
+    item.id = item_id
+    item.update()
+
+    return jsonify(item.serialize()), status.HTTP_200_OK
+
+
 # Update wishlist
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
 def update_wishlists(wishlist_id):
@@ -178,94 +240,6 @@ def delete_wishlists(wishlist_id):
 
     app.logger.info("Wishlist with ID: %d delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
-
-
-@app.route("/wishlists/<int:wishlist_id>/items", methods=["POST"])
-def create_wishlist_items(wishlist_id):
-    """
-    Create an item on a wishlist
-
-    This endpoint will add an item to a wishlist
-    """
-    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
-    check_content_type("application/json")
-
-    # See if the account exists and abort if it doesn't
-    wishlist = Wishlists.find(wishlist_id)
-    if not wishlist:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with id '{wishlist_id}' could not be found.",
-        )
-
-    # Create an address from the json data
-    item = Item()
-    item.deserialize(request.get_json())
-
-    # Append the address to the account
-    wishlist.items.append(item)
-    wishlist.update()
-
-    # Prepare a message to return
-    message = item.serialize()
-
-    return jsonify(message), status.HTTP_201_CREATED
-
-
-@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
-def update_item(wishlist_id, item_id):
-    """
-    Update an item
-
-    This endpoint will update an item based the body that is posted
-    """
-    app.logger.info(
-        "Request to update Item %s for Wishlist id: %s", (item_id, wishlist_id)
-    )
-    check_content_type("application/json")
-
-    # See if the address exists and abort if it doesn't
-    item = Item.find(item_id)
-    if not item:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with id '{item_id}' could not be found.",
-        )
-
-    # Update from the json in the body of the request
-    item.deserialize(request.get_json())
-    item.id = item_id
-    item.update()
-
-    return jsonify(item.serialize()), status.HTTP_200_OK
-
-
-@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
-def update_item(wishlist_id, item_id):
-    """
-    Update an item
-
-    This endpoint will update an item based the body that is posted
-    """
-    app.logger.info(
-        "Request to update Item %s for Wishlist id: %s", (item_id, wishlist_id)
-    )
-    check_content_type("application/json")
-
-    # See if the address exists and abort if it doesn't
-    item = Item.find(item_id)
-    if not item:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with id '{item_id}' could not be found.",
-        )
-
-    # Update from the json in the body of the request
-    item.deserialize(request.get_json())
-    item.id = item_id
-    item.update()
-
-    return jsonify(item.serialize()), status.HTTP_200_OK
 
 
 # READ A WISHLIST
