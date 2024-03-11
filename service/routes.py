@@ -90,6 +90,29 @@ def create_wishlists():
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
+# List a wishlist item
+@app.route("/items", methods=["GET"])
+def list_items():
+    """Returns all of the items in a wishlist"""
+    app.logger.info("Request for item list")
+
+    items = []
+
+    # See if any query filters were passed in
+    category = request.args.get("category")
+    name = request.args.get("name")
+    if category:
+        items = Item.find_by_category(category)
+    elif name:
+        items = Item.find_by_name(name)
+    else:
+        items = Item.all()
+
+    results = [item.serialize() for item in items]
+    app.logger.info("Returning %d items", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
+
 # List wishlist
 @app.route("/wishlists", methods=["GET"])
 def list_wishlists():
@@ -217,9 +240,35 @@ def update_item(wishlist_id, item_id):
     return jsonify(item.serialize()), status.HTTP_200_OK
 
 
-######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
+def update_item(wishlist_id, item_id):
+    """
+    Update an item
+
+    This endpoint will update an item based the body that is posted
+    """
+    app.logger.info(
+        "Request to update Item %s for Wishlist id: %s", (item_id, wishlist_id)
+    )
+    check_content_type("application/json")
+
+    # See if the address exists and abort if it doesn't
+    item = Item.find(item_id)
+    if not item:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{item_id}' could not be found.",
+        )
+
+    # Update from the json in the body of the request
+    item.deserialize(request.get_json())
+    item.id = item_id
+    item.update()
+
+    return jsonify(item.serialize()), status.HTTP_200_OK
+
+
 # READ A WISHLIST
-######################################################################
 @app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
 def get_wishlists(wishlist_id):
     """

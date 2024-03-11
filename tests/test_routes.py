@@ -70,7 +70,7 @@ class TestWishlists(TestCase):
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
 
-    # List test cases
+    # List wishlist test cases
     def test_get_wishlist_list(self):
         """It should Get a list of Wishlists"""
         self._create_wishlists(5)
@@ -79,6 +79,7 @@ class TestWishlists(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
+    # Create wishlist
     def test_create_wishlist(self):
         """It should Create a new Wishlist"""
         test_wishlist = WishlistsFactory()
@@ -130,6 +131,7 @@ class TestWishlists(TestCase):
         updated_wishlist = response.get_json()
         self.assertEqual(updated_wishlist["title"], "New Wishlist")
 
+    # Delete a wishlist
     def test_delete_wishlist(self):
         """It should Delete an Account"""
         # get the id of an account
