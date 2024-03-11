@@ -6,20 +6,20 @@ from datetime import date
 from factory import Faker
 import factory
 from factory.fuzzy import FuzzyDate, FuzzyInteger, FuzzyText
-from service.models.item import Wishlists, Item
+from service.models import Wishlist, Item
 
 # fake = Faker()
 # fake.add_provider(lorem)
 
 
 # fake.add_provider(lorem)
-class WishlistsFactory(factory.Factory):
+class WishlistFactory(factory.Factory):
     """Creates wishlists"""
 
     class Meta:  # pylint: disable=too-few-public-methods
         """Maps factory to data model"""
 
-        model = Wishlists
+        model = Wishlist
 
     id = factory.Sequence(lambda n: n)
     user_id = factory.Sequence(lambda n: n)
@@ -53,4 +53,4 @@ class ItemsFactory(factory.Factory):
     id = factory.Sequence(lambda n: n)
     wishlist_id = None
     item_name = FuzzyText(length=63)
-    wishlist = factory.SubFactory(WishlistsFactory)
+    wishlist = factory.SubFactory(WishlistFactory)

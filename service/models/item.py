@@ -1,5 +1,5 @@
 """
-Models for Wishlists
+Models for Wishlist
 
 All of the models are stored in this module
 """
@@ -37,7 +37,7 @@ class Item(db.Model, PersistentBase):
         return {
             "id": self.id,
             "wishlist_id": self.wishlist_id,
-            "name": self.item_name,
+            "item_name": self.item_name,
         }
 
     def deserialize(self, data):

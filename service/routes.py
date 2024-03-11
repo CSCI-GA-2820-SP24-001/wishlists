@@ -18,13 +18,13 @@
 Wishlist Store Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Wishlists from the inventory of wishlists in the WishlistShop
+and Delete Wishlist from the inventory of wishlists in the WishlistShop
 """
 
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
 from service.models.item import Item
-from service.models.wishlist import Wishlists
+from service.models.wishlist import Wishlist
 from service.common import status  # HTTP Status Codes
 
 
@@ -57,7 +57,7 @@ def create_wishlists():
     app.logger.info("Request to create a wishlist")
     check_content_type("application/json")
 
-    wishlist = Wishlists()
+    wishlist = Wishlist()
     wishlist.deserialize(request.get_json())
     wishlist.create()
     message = wishlist.serialize()
@@ -65,14 +65,14 @@ def create_wishlists():
     # location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
     location_url = "unknown"
 
-    app.logger.info("Wishlists with ID: %d created.", wishlist.id)
+    app.logger.info("Wishlist with ID: %d created.", wishlist.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 # List wishlist
 @app.route("/wishlists", methods=["GET"])
 def list_wishlists():
-    """Returns all of the Wishlists"""
+    """Returns all of the Wishlist"""
     app.logger.info("Request for wishlist list")
 
     wishlists = []
@@ -81,11 +81,11 @@ def list_wishlists():
     category = request.args.get("category")
     name = request.args.get("name")
     if category:
-        wishlists = Wishlists.find_by_category(category)
+        wishlists = Wishlist.find_by_category(category)
     elif name:
-        wishlists = Wishlists.find_by_name(name)
+        wishlists = Wishlist.find_by_name(name)
     else:
-        wishlists = Wishlists.all()
+        wishlists = Wishlist.all()
 
     results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %d wishlists", len(results))
@@ -103,7 +103,7 @@ def update_wishlists(wishlist_id):
     app.logger.info("Request to update wishlist with id: %d", wishlist_id)
     check_content_type("application/json")
 
-    wishlist = Wishlists.find(wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
     if not wishlist:
         app.error(
             status.HTTP_404_NOT_FOUND,
@@ -128,7 +128,7 @@ def delete_wishlists(wishlist_id):
     """
     app.logger.info("Request to delete wishlist with id: %d", wishlist_id)
 
-    wishlist = Wishlists.find(wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
     if wishlist:
         wishlist.delete()
 
@@ -140,17 +140,17 @@ def delete_wishlists(wishlist_id):
 @app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
 def get_wishlists(wishlist_id):
     """
-    Retrieve a single Wishlists
+    Retrieve a single Wishlist
 
-    This endpoint will return a Wishlists based on it's id
+    This endpoint will return a Wishlist based on it's id
     """
     app.logger.info("Request for wishlist with id: %s", wishlist_id)
 
-    wishlist = Wishlists.find(wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
     if not wishlist:
         error(
             status.HTTP_404_NOT_FOUND,
-            f"Wishlists with id '{wishlist_id}' was not found.",
+            f"Wishlist with id '{wishlist_id}' was not found.",
         )
 
     app.logger.info("Returning wishlist: %s", wishlist.title)
@@ -174,7 +174,7 @@ def create_wishlist_items(wishlist_id):
     check_content_type("application/json")
 
     # See if the account exists and abort if it doesn't
-    wishlist = Wishlists.find(wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
     if not wishlist:
         abort(
             status.HTTP_404_NOT_FOUND,
@@ -202,7 +202,7 @@ def list_items(wishlist_id):
     app.logger.info("Request for all Items for Wishlist with id: %s", wishlist_id)
 
     # See if the account exists and abort if it doesn't
-    wishlist = Wishlists.find(wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
     if not wishlist:
         abort(
             status.HTTP_404_NOT_FOUND,

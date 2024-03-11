@@ -15,9 +15,9 @@ logger = logging.getLogger("flask.app")
 ######################################################################
 
 
-class Wishlists(db.Model, PersistentBase):
+class Wishlist(db.Model, PersistentBase):
     """
-    Class that represents a Wishlists
+    Class that represents a Wishlist
     """
 
     ##################################################
@@ -32,7 +32,7 @@ class Wishlists(db.Model, PersistentBase):
     date = db.Column(db.Date(), nullable=False, default=date.today())
 
     def serialize(self):
-        """Serializes a Wishlists into a dictionary"""
+        """Serializes a Wishlist into a dictionary"""
         wishlist = {
             "id": self.id,
             "user_id": self.user_id,
@@ -49,7 +49,7 @@ class Wishlists(db.Model, PersistentBase):
 
     def deserialize(self, data):
         """
-        Deserializes a Wishlists from a dictionary
+        Deserializes a Wishlist from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
@@ -71,11 +71,11 @@ class Wishlists(db.Model, PersistentBase):
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
-                "Invalid Wishlists: missing " + error.args[0]
+                "Invalid Wishlist: missing " + error.args[0]
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid Wishlists: body of request contained bad or no data "
+                "Invalid Wishlist: body of request contained bad or no data "
                 + str(error)
             ) from error
         return self
@@ -86,10 +86,10 @@ class Wishlists(db.Model, PersistentBase):
 
     @classmethod
     def find_by_name(cls, name):
-        """Returns all Wishlists with the given name
+        """Returns all Wishlist with the given name
 
         Args:
-            name (string): the name of the Wishlists you want to match
+            name (string): the name of the Wishlist you want to match
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
