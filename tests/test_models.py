@@ -182,18 +182,18 @@ class TestWishlist(TestCase):
         self.assertEqual(items[0]["item_name"], item.item_name)
         self.assertEqual(items[0]["wishlist_id"], item.wishlist_id)
 
-    def test_deserialize_an_account(self):
+    def test_deserialize_a_wishlist(self):
         """It should Deserialize a wishlist"""
-        account = WishlistFactory()
-        account.items.append(WishlistFactory())
-        account.create()
-        serial_account = account.serialize()
+        wishlist = WishlistFactory()
+        wishlist.items.append(WishlistFactory())
+        wishlist.create()
+        serial_account = wishlist.serialize()
         new_account = Wishlist()
         new_account.deserialize(serial_account)
-        self.assertEqual(new_account.title, account.title)
-        self.assertEqual(new_account.description, account.description)
-        self.assertEqual(new_account.count, account.count)
-        self.assertEqual(new_account.date, account.date)
+        self.assertEqual(new_account.title, wishlist.title)
+        self.assertEqual(new_account.description, wishlist.description)
+        self.assertEqual(new_account.count, wishlist.count)
+        self.assertEqual(new_account.date, wishlist.date)
 
     def test_deserialize_with_key_error(self):
         """It should not Deserialize a wishlist with a KeyError"""
@@ -277,7 +277,7 @@ class TestWishlist(TestCase):
         serial_item = item.serialize()
         self.assertEqual(serial_item["id"], item.id)
         # self.assertEqual(serial_item["wishlist_id"], item.wishlist_id)
-        self.assertEqual(serial_item["name"], item.item_name)
+        self.assertEqual(serial_item["item_name"], item.item_name)
 
     def test_deserialize_an_item(self):
         """It should deserialize an item"""

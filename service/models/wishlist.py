@@ -85,11 +85,11 @@ class Wishlist(db.Model, PersistentBase):
     ##################################################
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, item_name):
         """Returns all Wishlist with the given name
 
         Args:
             name (string): the name of the Wishlist you want to match
         """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+        logger.info("Processing name query for %s ...", item_name)
+        return cls.query.filter(cls.item_name == item_name)
