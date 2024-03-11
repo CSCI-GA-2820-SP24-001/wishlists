@@ -77,6 +77,7 @@ class Item(db.Model):
         """Serializes a item into a dictionary"""
         return {
             "id": self.id,
+            "wishlist_id": self.wishlist_id,
             "name": self.item_name,
         }
 
@@ -87,7 +88,7 @@ class Item(db.Model):
             data (dict): A dictionary containing the item data
         """
         try:
-            # self.id = data["id"]
+            self.wishlist_id = data["wishlist_id"]
             self.item_name = data["name"]
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
@@ -112,6 +113,12 @@ class Item(db.Model):
         """Returns all of the items in the database"""
         logger.info("Processing all Wishlists")
         return cls.query.all()
+
+    @classmethod
+    def find(cls, by_id):
+        """Finds a Wishlists by it's ID"""
+        logger.info("Processing lookup for id %s ...", by_id)
+        return cls.query.session.get(cls, by_id)
 
     # @classmethod
     # def find_by_name(cls, name):

@@ -157,8 +157,8 @@ def delete_wishlists(wishlist_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
-@app.route("/items/<int:wishlist_id>/items", methods=["POST"])
-def create_items(wishlist_id):
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["POST"])
+def create_wishlist_items(wishlist_id):
     """
     Create an item on a wishlist
 

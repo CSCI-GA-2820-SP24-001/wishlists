@@ -139,8 +139,8 @@ class TestWishlists(TestCase):
     def test_deserialize_an_item(self):
         """It should deserialize an item"""
         item = ItemsFactory()
-        item.create()
+
         new_item = Item()
         new_item.deserialize(item.serialize())
-        # self.assertEqual(new_item.id, item.id)
+        self.assertEqual(new_item.wishlist_id, item.wishlist_id)
         self.assertEqual(new_item.item_name, item.item_name)

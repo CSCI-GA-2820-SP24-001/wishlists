@@ -163,7 +163,7 @@ class TestWishlists(TestCase):
         data = resp.get_json()
         logging.debug(data)
         self.assertEqual(data["wishlist_id"], wishlist.id)
-        self.assertEqual(data["item_name"], item.item_name)
+        self.assertEqual(data["name"], item.item_name)
 
     def test_update_item(self):
         """It should Update an item on a wishlist"""
@@ -180,7 +180,7 @@ class TestWishlists(TestCase):
         data = resp.get_json()
         logging.debug(data)
         item_id = data["id"]
-        data["item_name"] = "XXXX"
+        data["name"] = "XXXX"
 
         # send the update back
         resp = self.client.put(
@@ -201,4 +201,4 @@ class TestWishlists(TestCase):
         logging.debug(data)
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["wishlist_id"], wishlist.id)
-        self.assertEqual(data["item_name"], "XXXX")
+        self.assertEqual(data["name"], "XXXX")
