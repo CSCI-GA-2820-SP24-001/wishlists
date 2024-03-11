@@ -133,7 +133,7 @@ class TestWishlists(TestCase):
 
     # Delete a wishlist
     def test_delete_wishlist(self):
-        """It should Delete an Account"""
+        """It should Delete a Wishlist"""
         # get the id of an account
         wishlist = self._create_wishlists(1)[0]
         resp = self.client.delete(f"{BASE_URL}/{wishlist.id}")
@@ -216,3 +216,12 @@ class TestWishlists(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+
+        # Delete a item
+
+    def test_delete_item(self):
+        """It should Delete a Item"""
+        # get the id of an item
+        item = self._create_wishlists(1)[0]
+        resp = self.client.delete(f"{BASE_URL}/{item.id}")
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
