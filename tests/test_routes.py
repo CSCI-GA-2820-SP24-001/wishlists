@@ -225,3 +225,14 @@ class TestWishlists(TestCase):
         item = self._create_wishlists(1)[0]
         resp = self.client.delete(f"{BASE_URL}/{item.id}")
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Read an item
+
+    def test_get_item(self):
+        """It should Get a single Item"""
+        # get the id of an item
+        test_item = self._create_wishlists(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_item.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["id"], test_item.id)

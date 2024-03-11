@@ -260,6 +260,27 @@ def delete_wishlists(wishlist_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
+# READ A ITEM
+@app.route("/items/<int:item_id>", methods=["GET"])
+def get_items(item_id):
+    """
+    Retrieve a single Items
+
+    This endpoint will return a Items based on it's id
+    """
+    app.logger.info("Request for item with id: %s", item_id)
+
+    item = Item.find(item_id)
+    if not item:
+        error(
+            status.HTTP_404_NOT_FOUND,
+            f"Items with id '{item_id}' was not found.",
+        )
+
+    app.logger.info("Returning item: %s", item.id)
+    return jsonify(item.serialize()), status.HTTP_200_OK
+
+
 # READ A WISHLIST
 @app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
 def get_wishlists(wishlist_id):
