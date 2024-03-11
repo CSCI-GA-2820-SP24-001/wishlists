@@ -6,7 +6,7 @@ from datetime import date
 from factory import Faker
 import factory
 from factory.fuzzy import FuzzyDate, FuzzyInteger, FuzzyText
-from service.models import Wishlists, Item
+from service.models.item import Wishlists, Item
 
 # fake = Faker()
 # fake.add_provider(lorem)

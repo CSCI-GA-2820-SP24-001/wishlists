@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from unittest.mock import patch
-from service.models import Wishlists, Item, db, DataValidationError
+from service.models.item import Wishlists, Item, db, DataValidationError
 from .factories import ItemsFactory, WishlistsFactory
 
 DATABASE_URI = os.getenv(

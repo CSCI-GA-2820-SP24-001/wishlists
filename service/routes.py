@@ -23,7 +23,8 @@ and Delete Wishlists from the inventory of wishlists in the WishlistShop
 
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import Wishlists, Item
+from service.models.item import Item
+from service.models.wishlist import Wishlists
 from service.common import status  # HTTP Status Codes
 
 

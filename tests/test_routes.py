@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, Wishlists
+from service.models.item import db, Wishlists
 from tests.factories import WishlistsFactory, ItemsFactory
 
 DATABASE_URI = os.getenv(
