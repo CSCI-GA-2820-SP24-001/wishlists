@@ -42,7 +42,7 @@ class WishlistsFactory(factory.Factory):
 
 
 class ItemsFactory(factory.Factory):
-    """Creates fake Addresses"""
+    """Creates fake Items"""
 
     # pylint: disable=too-few-public-methods
     class Meta:
