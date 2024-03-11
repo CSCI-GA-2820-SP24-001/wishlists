@@ -72,50 +72,16 @@ class TestWishlists(TestCase):
 
     ##to do: test_list_wishlist
 
-
-class TestItems(TestCase):
-    """Test Cases for Items Model"""
-
-    @classmethod
-    def setUpClass(cls):
-        """This runs once before the entire test suite"""
-        app.config["TESTING"] = True
-        app.config["DEBUG"] = False
-        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
-        app.logger.setLevel(logging.CRITICAL)
-        app.app_context().push()
-
-    @classmethod
-    def tearDownClass(cls):
-        """This runs once after the entire test suite"""
-        db.session.close()
-
-    def setUp(self):
-        """This runs before each test"""
-        db.session.query(Item).delete()  # clean up the last tests
-        db.session.commit()
-
-    def tearDown(self):
-        """This runs after each test"""
-        db.session.remove()
-
     ######################################################################
     #  T E S T   C A S E S
     ######################################################################
 
-    def test_create_item(self):
-        """It should create an item"""
-        items = ItemsFactory()
-        items.create()
-        # self.assertIsNotNone(items.id)
-        found = items.all()
-        print(found)
-        self.assertEqual(len(found), 1)
-
     def test_add_wishlist_item(self):
-        """It should Create an account with an item and add it to the database"""
+        """It should Create a wishlist with an item and add it to the database"""
         # wishlists = Item()
         # self.assertIsNotNone(wishlists)
+        wishlists = Wishlists.all()
+        self.assertEqual(wishlists, [])
         wishlist = WishlistsFactory()
         item = ItemsFactory(wishlist=wishlist)
         wishlist.items.append(item)
@@ -124,6 +90,43 @@ class TestItems(TestCase):
         self.assertIsNotNone(wishlist.id)
         wishlists = Wishlists.all()
         self.assertNotEqual(len(wishlists), 0)
+
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(new_wishlist.items[0].item_name, item.item_name)
+
+        item2 = ItemsFactory(wishlist=wishlist)
+        wishlist.items.append(item2)
+        wishlist.update()
+
+        new_wishlist = Wishlists.find(wishlist.id)
+        self.assertEqual(len(new_wishlist.items), 2)
+        self.assertEqual(new_wishlist.items[1].item_name, item2.item_name)
+
+    def test_update_wishlist_item(self):
+        """It should Update a wishlists item"""
+        wishlists = Wishlists.all()
+
+        wishlist = WishlistsFactory()
+        item = ItemsFactory(wishlist=wishlist)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlists.all()
+        self.assertGreaterEqual(len(wishlists), 0)
+
+        # Fetch it back
+        wishlist = Wishlists.find(wishlist.id)
+        old_item = wishlist.items[0]
+        print("%r", old_item)
+        self.assertEqual(old_item.item_name, item.item_name)
+        # Change the city
+        old_item.item_name = "XX"
+        wishlist.update()
+
+        # Fetch it back again
+        wishlist = Wishlists.find(wishlist.id)
+        item = wishlist.items[0]
+        self.assertEqual(item.item_name, "XX")
 
     def test_serialize_an_item(self):
         """It should serialize an item"""
