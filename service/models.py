@@ -21,12 +21,10 @@ class DataValidationError(Exception):
 class Item(db.Model):
     """Class that represents items"""
 
-    __tablename__ = "items"
-
-    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     item_name = db.Column(db.String(63), nullable=False)
     wishlist_id = db.Column(
-        db.Integer, db.ForeignKey("wishlists.id", ondelete="CASCADE"), nullable=False
+        db.Integer, db.ForeignKey("wishlist.id", ondelete="CASCADE"), nullable=False
     )
 
     def __repr__(self):
@@ -102,12 +100,6 @@ class Item(db.Model):
             ) from error
         return self
 
-    # @classmethod
-    # def find(cls, by_id):
-    #     """Finds a item by it's ID"""
-    #     logger.info("Processing lookup for id %s ...", by_id)
-    #     return cls.query.session.get(cls, by_id)
-
     @classmethod
     def all(cls):
         """Returns all of the items in the database"""
@@ -120,23 +112,12 @@ class Item(db.Model):
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.session.get(cls, by_id)
 
-    # @classmethod
-    # def find_by_name(cls, name):
-    #     """Returns all items with the given name
-
-    #     Args:
-    #         name (string): the name of the items you want to match
-    #     """
-    #     logger.info("Processing name query for %s ...", name)
-    #     return cls.query.filter(cls.name == name)
-
 
 class Wishlists(db.Model):
     """
     Class that represents a Wishlists
     """
 
-    __tablename__ = "wishlists"
     ##################################################
     # Table Schema
     ##################################################
