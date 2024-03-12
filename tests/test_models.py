@@ -60,6 +60,7 @@ class TestWishlist(TestCase):
             items=fake_wishlist.items,
             date=fake_wishlist.date,
             count=fake_wishlist.count,
+            user_id=fake_wishlist.user_id,
         )
         self.assertIsNotNone(wishlist)
         self.assertEqual(wishlist.id, None)
@@ -67,8 +68,9 @@ class TestWishlist(TestCase):
         self.assertEqual(wishlist.description, fake_wishlist.description)
         self.assertEqual(wishlist.count, fake_wishlist.count)
         self.assertEqual(wishlist.date, fake_wishlist.date)
+        self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
 
-    def test_add_a_account(self):
+    def test_add_a_wishlist(self):
         """It should Create a wishlist and add it to the database"""
         wishlists = Wishlist.all()
         self.assertEqual(wishlists, [])
@@ -110,8 +112,8 @@ class TestWishlist(TestCase):
         wishlist = WishlistFactory()
         self.assertRaises(DataValidationError, wishlist.update)
 
-    def test_read_account(self):
-        """It should Read an account"""
+    def test_read_wishlist(self):
+        """It should Read a wishlist"""
         wishlist = WishlistFactory()
         wishlist.create()
 
