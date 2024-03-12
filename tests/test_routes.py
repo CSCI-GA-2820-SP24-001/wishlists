@@ -86,6 +86,14 @@ class TestWishlist(TestCase):
     #  TEST CASES FOR WISHLIST
     ######################################################################
 
+    def test_health(self):
+        """It should be healthy"""
+        response = self.client.get("/health")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["status"], 200)
+        self.assertEqual(data["message"], "Healthy")
+
     def test_index(self):
         """It should call the Home Page"""
         resp = self.client.get("/")
@@ -129,15 +137,15 @@ class TestWishlist(TestCase):
 
         # Todo: Uncomment this code when get_wishlists is implemented
         ## Check that the location header was correct
-        # response = self.client.get(location)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # new_wishlist = response.get_json()
-        # self.assertEqual(new_wishlist["user_id"], test_wishlist.user_id)
-        # self.assertEqual(new_wishlist["title"], test_wishlist.title)
-        # self.assertEqual(new_wishlist["description"], test_wishlist.description)
-        # self.assertEqual(new_wishlist["items"], [])
-        # self.assertEqual(new_wishlist["count"], test_wishlist.count)
-        # self.assertEqual(new_wishlist["date"], test_wishlist.date)
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["user_id"], test_wishlist.user_id)
+        self.assertEqual(new_wishlist["title"], test_wishlist.title)
+        self.assertEqual(new_wishlist["description"], test_wishlist.description)
+        self.assertEqual(new_wishlist["items"], test_wishlist.items)
+        self.assertEqual(new_wishlist["count"], test_wishlist.count)
+        self.assertEqual(new_wishlist["date"], str(test_wishlist.date))
 
     # Update wishlist
     def test_update_wishlist(self):
@@ -194,6 +202,11 @@ class TestWishlist(TestCase):
         resp = self.client.put(BASE_URL, json={"not": "today"})
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    def test_get_wishlist_not_found(self):
+        """It should not Read a Wishlist that is not found"""
+        resp = self.client.get(f"{BASE_URL}/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
     ######################################################################
     #  I T E M S  T E S T   C A S E S
     ######################################################################
@@ -230,7 +243,7 @@ class TestWishlist(TestCase):
         data = resp.get_json()
         logging.debug(data)
         item_id = data["id"]
-        # data["name"] = item.item_name
+        data["item_name"] = item.item_name
 
         # send the update back
         resp = self.client.put(
@@ -251,7 +264,7 @@ class TestWishlist(TestCase):
         logging.debug(data)
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["wishlist_id"], wishlist.id)
-        # self.assertEqual(data["name"], item.item_name)
+        self.assertEqual(data["item_name"], item.item_name)
 
     # List item
     def test_get_item_list(self):

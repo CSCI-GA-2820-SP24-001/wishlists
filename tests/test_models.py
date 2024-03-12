@@ -287,3 +287,26 @@ class TestWishlist(TestCase):
         new_item.deserialize(item.serialize())
         self.assertEqual(new_item.wishlist_id, item.wishlist_id)
         self.assertEqual(new_item.item_name, item.item_name)
+
+    def test_delete_wishlist_item(self):
+        """It should Delete a wishlists item"""
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+
+        wishlist = WishlistFactory()
+        item = ItemsFactory(wishlist=wishlist)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
+
+        # Fetch it back
+        wishlist = Wishlist.find(wishlist.id)
+        item = wishlist.items[0]
+        item.delete()
+        wishlist.update()
+
+        # Fetch it back again
+        wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(len(wishlist.items), 0)
