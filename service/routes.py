@@ -29,6 +29,17 @@ from service.common import status  # HTTP Status Codes
 
 
 # app = app(__name__)
+
+
+######################################################################
+# GET HEALTH CHECK
+######################################################################
+@app.route("/health")
+def health_check():
+    """Let them know our heart is still beating"""
+    return jsonify(status=200, message="Healthy"), status.HTTP_200_OK
+
+
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -62,8 +73,7 @@ def create_wishlists():
     wishlist.create()
     message = wishlist.serialize()
     # Todo: uncomment this code when get_wishlists is implemented
-    # location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
-    location_url = "unknown"
+    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
 
     app.logger.info("Wishlist with ID: %d created.", wishlist.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
@@ -72,23 +82,20 @@ def create_wishlists():
 # List wishlist
 @app.route("/wishlists", methods=["GET"])
 def list_wishlists():
-    """Returns all of the Wishlist"""
-    app.logger.info("Request for wishlist list")
-
+    """Returns all of the Wishlists"""
+    app.logger.info("Request for Wishlist list")
     wishlists = []
 
-    # See if any query filters were passed in
-    category = request.args.get("category")
+    # Process the query string if any
     name = request.args.get("name")
-    if category:
-        wishlists = Wishlist.find_by_category(category)
-    elif name:
+    if name:
         wishlists = Wishlist.find_by_name(name)
     else:
         wishlists = Wishlist.all()
 
+    # Return as an array of dictionaries
     results = [wishlist.serialize() for wishlist in wishlists]
-    app.logger.info("Returning %d wishlists", len(results))
+
     return jsonify(results), status.HTTP_200_OK
 
 
