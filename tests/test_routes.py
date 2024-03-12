@@ -1,5 +1,5 @@
 """
-TestWishlists API Service Test Suite
+TestWishlist API Service Test Suite
 """
 
 import os
@@ -7,8 +7,8 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, Wishlists
-from tests.factories import WishlistsFactory, ItemsFactory
+from service.models import db, Wishlist
+from tests.factories import WishlistFactory, ItemsFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -22,7 +22,7 @@ BASE_URL = "/wishlists"
 # pylint: disable=too-many-public-methods
 
 
-class TestWishlists(TestCase):
+class TestWishlist(TestCase):
     """REST API Server Tests"""
 
     @classmethod
@@ -43,7 +43,7 @@ class TestWishlists(TestCase):
     def setUp(self):
         """Runs before each test"""
         self.client = app.test_client()
-        db.session.query(Wishlists).delete()  # clean up the last tests
+        db.session.query(Wishlist).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
@@ -54,7 +54,7 @@ class TestWishlists(TestCase):
         """Factory method to create wishlists in bulk"""
         wishlists = []
         for _ in range(count):
-            wishlist = WishlistsFactory()
+            wishlist = WishlistFactory()
             response = self.client.post(BASE_URL, json=wishlist.serialize())
             self.assertEqual(
                 response.status_code,
@@ -86,20 +86,31 @@ class TestWishlists(TestCase):
     #  TEST CASES FOR WISHLIST
     ######################################################################
 
+    def test_index(self):
+        """It should call the Home Page"""
+        resp = self.client.get("/")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
     # List wishlist
     def test_get_wishlist_list(self):
-        """It should Get a list of Wishlists"""
+        """It should Get a list of Wishlist"""
         self._create_wishlists(5)
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
+    def test_get_wishlist_by_name(self):
+        """It should Get a Wishlist by Name"""
+        accounts = self._create_wishlists(3)
+        resp = self.client.get(BASE_URL, query_string=f"title={accounts[1].title}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
     # Create wishlist
     def test_create_wishlist(self):
         """It should Create a new Wishlist"""
-        test_wishlist = WishlistsFactory()
-        logging.debug("Test Wishlists: %s", test_wishlist.serialize())
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
         response = self.client.post(BASE_URL, json=test_wishlist.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -124,7 +135,7 @@ class TestWishlists(TestCase):
         # self.assertEqual(new_wishlist["user_id"], test_wishlist.user_id)
         # self.assertEqual(new_wishlist["title"], test_wishlist.title)
         # self.assertEqual(new_wishlist["description"], test_wishlist.description)
-        # self.assertEqual(new_wishlist["items"], test_wishlist.items)
+        # self.assertEqual(new_wishlist["items"], [])
         # self.assertEqual(new_wishlist["count"], test_wishlist.count)
         # self.assertEqual(new_wishlist["date"], test_wishlist.date)
 
@@ -132,7 +143,7 @@ class TestWishlists(TestCase):
     def test_update_wishlist(self):
         """It should Update an existing Wishlist"""
         # create a wishlist to update
-        test_wishlist = WishlistsFactory()
+        test_wishlist = WishlistFactory()
         response = self.client.post(BASE_URL, json=test_wishlist.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -165,6 +176,24 @@ class TestWishlists(TestCase):
         data = response.get_json()
         self.assertEqual(data["title"], test_wishlist.title)
 
+    def test_bad_request(self):
+        """It should not Create when sending the wrong data"""
+        resp = self.client.post(BASE_URL, json={"name": "not enough data"})
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_unsupported_media_type(self):
+        """It should not Create when sending wrong media type"""
+        account = WishlistFactory()
+        resp = self.client.post(
+            BASE_URL, json=account.serialize(), content_type="test/html"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_method_not_allowed(self):
+        """It should not allow an illegal method call"""
+        resp = self.client.put(BASE_URL, json={"not": "today"})
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
     ######################################################################
     #  I T E M S  T E S T   C A S E S
     ######################################################################
@@ -183,7 +212,7 @@ class TestWishlists(TestCase):
         data = resp.get_json()
         logging.debug(data)
         self.assertEqual(data["wishlist_id"], wishlist.id)
-        self.assertEqual(data["name"], item.item_name)
+        self.assertEqual(data["item_name"], item.item_name)
 
     # Update item
     def test_update_item(self):
@@ -307,4 +336,4 @@ class TestWishlists(TestCase):
         logging.debug(data)
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["wishlist_id"], wishlist.id)
-        # self.assertEqual(data["name"], item.item_name)
+        self.assertEqual(data["item_name"], item.item_name)
