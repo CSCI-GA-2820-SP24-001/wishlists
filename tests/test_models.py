@@ -185,7 +185,7 @@ class TestWishlist(TestCase):
     def test_deserialize_a_wishlist(self):
         """It should Deserialize a wishlist"""
         wishlist = WishlistFactory()
-        wishlist.items.append(WishlistFactory())
+        wishlist.items.append(ItemsFactory())
         wishlist.create()
         serial_account = wishlist.serialize()
         new_account = Wishlist()
