@@ -5,8 +5,8 @@ Test cases for Pet Model
 import os
 import logging
 from unittest import TestCase
-from wsgi import app
 from unittest.mock import patch
+from wsgi import app
 from service.models import Wishlist, Item, db, DataValidationError
 from .factories import ItemsFactory, WishlistFactory
 
@@ -20,7 +20,7 @@ DATABASE_URI = os.getenv(
 ######################################################################
 # pylint: disable=too-many-public-methods
 class TestWishlist(TestCase):
-    """Test Cases for Wishlist Model"""
+    """Wishlist Model Test Cases"""
 
     @classmethod
     def setUpClass(cls):
@@ -39,6 +39,7 @@ class TestWishlist(TestCase):
     def setUp(self):
         """This runs before each test"""
         db.session.query(Wishlist).delete()  # clean up the last tests
+        db.session.query(Item).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
