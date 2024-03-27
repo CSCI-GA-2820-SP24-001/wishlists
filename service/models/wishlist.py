@@ -85,7 +85,7 @@ class Wishlist(db.Model, PersistentBase):
     ##################################################
 
     @classmethod
-    def find_by_name(cls, title):
+    def find_by_title(cls, title):
         """Returns all Wishlist with the given title
 
         Args:

@@ -165,12 +165,12 @@ class TestWishlist(TestCase):
             wishlist.create()
         title = wishlists[0].title
         count = len([pet for pet in wishlists if pet.title == title])
-        found = Wishlist.find_by_name(title)
+        found = Wishlist.find_by_title(title)
         self.assertEqual(found.count(), count)
         for wishlist in found:
             self.assertEqual(wishlist.title, title)
         # Fetch it back by name
-        same_wishlist = Wishlist.find_by_name(wishlist.title)[0]
+        same_wishlist = Wishlist.find_by_title(wishlist.title)[0]
         self.assertEqual(same_wishlist.id, wishlist.id)
         self.assertEqual(same_wishlist.title, wishlist.title)
 
