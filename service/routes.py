@@ -47,7 +47,10 @@ def health_check():
 def index():
     """Root URL response"""
     return (
-        "Reminder: return some useful information in json format about the service here",
+        """Wishlists REST API Service: Wishlists are where users will save items
+            that they want but are not yet ready to buy.
+            Here you can find information about wishlists (/wishlists)
+            and the items (/wishlists/ { wishlist_id }/items) within them. """,
         status.HTTP_200_OK,
     )
 
@@ -87,7 +90,7 @@ def list_wishlists():
     wishlists = []
 
     # Process the query string if any
-    name = request.args.get("name")
+    name = request.args.get("title")
     if name:
         wishlists = Wishlist.find_by_name(name)
     else:
