@@ -102,6 +102,25 @@ def list_wishlists():
     return jsonify(results), status.HTTP_200_OK
 
 
+# List wishlist
+@app.route("/wishlists/<string:title>", methods=["GET"])
+def query_wishlist_by_title(title):
+    """Returns all of the Wishlists"""
+    app.logger.info("Request for Wishlist list by name")
+    # wishlists = []
+
+    # Process the query string if any
+    name = title
+    if name:
+        wishlists = Wishlist.find_by_name(name)
+        # results = wishlists.serialize()
+    else:
+        wishlists = Wishlist.all()
+    results = [wishlist.serialize() for wishlist in wishlists]
+
+    return jsonify(results[0]), status.HTTP_200_OK
+
+
 # Update wishlist
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
 def update_wishlists(wishlist_id):
