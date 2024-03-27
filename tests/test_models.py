@@ -158,11 +158,17 @@ class TestWishlist(TestCase):
         wishlists = Wishlist.all()
         self.assertEqual(len(wishlists), 5)
 
-    def test_find_by_name(self):
-        """It should Find an Account by name"""
-        wishlist = WishlistFactory()
-        wishlist.create()
-
+    def test_find_by_title(self):
+        """It should Find an wishlist by title"""
+        wishlists = WishlistFactory.create_batch(10)
+        for wishlist in wishlists:
+            wishlist.create()
+        title = wishlists[0].title
+        count = len([pet for pet in wishlists if pet.title == title])
+        found = Wishlist.find_by_name(title)
+        self.assertEqual(found.count(), count)
+        for wishlist in found:
+            self.assertEqual(wishlist.title, title)
         # Fetch it back by name
         same_wishlist = Wishlist.find_by_name(wishlist.title)[0]
         self.assertEqual(same_wishlist.id, wishlist.id)
