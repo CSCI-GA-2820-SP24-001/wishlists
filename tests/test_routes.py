@@ -22,8 +22,8 @@ BASE_URL = "/wishlists"
 # pylint: disable=too-many-public-methods
 
 
-class TestWishlist(TestCase):
-    """REST API Server Tests"""
+class TestWishlistService(TestCase):
+    """Wishlist Service Tests"""
 
     @classmethod
     def setUpClass(cls):
@@ -37,7 +37,7 @@ class TestWishlist(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Run once after all tests"""
+        """Runs once before test suite"""
         db.session.close()
 
     def setUp(self):
@@ -47,7 +47,7 @@ class TestWishlist(TestCase):
         db.session.commit()
 
     def tearDown(self):
-        """This runs after each test"""
+        """Runs once after each test case"""
         db.session.remove()
 
     def _create_wishlists(self, count):
@@ -135,8 +135,7 @@ class TestWishlist(TestCase):
         self.assertEqual(new_wishlist["count"], test_wishlist.count)
         self.assertEqual(new_wishlist["date"], str(test_wishlist.date))
 
-        # Todo: Uncomment this code when get_wishlists is implemented
-        ## Check that the location header was correct
+        # Check that the location header was correct
         response = self.client.get(location)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_wishlist = response.get_json()

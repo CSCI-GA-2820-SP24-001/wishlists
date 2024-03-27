@@ -72,7 +72,7 @@ def create_wishlists():
     wishlist.deserialize(request.get_json())
     wishlist.create()
     message = wishlist.serialize()
-    # Todo: uncomment this code when get_wishlists is implemented
+
     location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
 
     app.logger.info("Wishlist with ID: %d created.", wishlist.id)
@@ -112,7 +112,7 @@ def update_wishlists(wishlist_id):
 
     wishlist = Wishlist.find(wishlist_id)
     if not wishlist:
-        app.error(
+        error(
             status.HTTP_404_NOT_FOUND,
             f"Wishlist with id: '{wishlist_id}' was not found.",
         )
