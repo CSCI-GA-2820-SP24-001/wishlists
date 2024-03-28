@@ -90,9 +90,10 @@ def list_wishlists():
     wishlists = []
 
     # Process the query string if any
-    name = request.args.get("title")
-    if name:
-        wishlists = Wishlist.find_by_name(name)
+
+    title = request.args.get("title")
+    if title:
+        wishlists = Wishlist.find_by_title(title)
     else:
         wishlists = Wishlist.all()
 

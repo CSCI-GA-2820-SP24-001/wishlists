@@ -7,6 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
+from urllib.parse import quote_plus
 from service.models import db, Wishlist
 from tests.factories import WishlistFactory, ItemsFactory
 
@@ -110,9 +111,17 @@ class TestWishlistService(TestCase):
 
     def test_get_wishlist_by_name(self):
         """It should Get a Wishlist by Name"""
-        accounts = self._create_wishlists(3)
-        resp = self.client.get(BASE_URL, query_string=f"title={accounts[1].title}")
+        wishlists = self._create_wishlists(10)
+        test_title = wishlists[0].title
+        title_wishlists = [w for w in wishlists if w.title == test_title]
+        response = self.client.get(
+            BASE_URL, query_string=f"title={quote_plus(test_title)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        resp = self.client.get(BASE_URL, query_string=f"title={wishlists[1].title}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(title_wishlists))
 
     # Create wishlist
     def test_create_wishlist(self):
