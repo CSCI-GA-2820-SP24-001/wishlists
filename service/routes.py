@@ -326,3 +326,31 @@ def error(status_code, reason):
     """Logs the error and then aborts"""
     app.logger.error(reason)
     abort(status_code, reason)
+
+
+# Action : Clear a wishlist
+
+
+@app.route("/wishlists/<int:wishlist_id>/clear", methods=["PUT"])
+def clear_wishlists(wishlist_id):
+    """
+    Clearing a Wishlist
+
+    This endpoint will clear a wishlist
+    """
+    app.logger.info("Request to clear wishlist with id: %d", wishlist_id)
+
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        error(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{wishlist_id}' was not found.",
+        )
+
+    # At this point you would execute code to clear the wishlist
+    # For the moment, we will just set them to unavailable
+
+    wishlist.update()
+
+    app.logger.info("Wishlist with ID: %d has been cleared.", wishlist_id)
+    return wishlist.serialize(), status.HTTP_200_OK

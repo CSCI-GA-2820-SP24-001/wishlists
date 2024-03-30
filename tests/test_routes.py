@@ -358,3 +358,16 @@ class TestWishlistService(TestCase):
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["wishlist_id"], wishlist.id)
         self.assertEqual(data["item_name"], item.item_name)
+
+    # Action clear test case
+
+    def test_clear_a_wishlist(self):
+        """It should Clear a Wishlist"""
+        wishlists = self._create_wishlists(10)
+        wishlist = wishlists[0]
+        response = self.client.put(f"{BASE_URL}/{wishlist.id}/clear")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(f"{BASE_URL}/{wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        logging.debug("Response data: %s", data)
