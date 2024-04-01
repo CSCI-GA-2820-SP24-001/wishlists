@@ -5,9 +5,9 @@ TestWishlist API Service Test Suite
 import os
 import logging
 from unittest import TestCase
+from urllib.parse import quote_plus
 from wsgi import app
 from service.common import status
-from urllib.parse import quote_plus
 from service.models import db, Wishlist
 from tests.factories import WishlistFactory, ItemsFactory
 
