@@ -1,5 +1,5 @@
 # Wishlists Service
-[![Build Status](https://github.com/CSCI-GA-2820-SP24-001/wishlists/blob/master/.github/workflows/ci.yml/badge.svg)](https://github.com/CSCI-GA-2820-SP24-001/wishlists/actions)
+[![Build Status](https://github.com/CSCI-GA-2820-SP24-001/wishlists/actions/workflows/ci.yml/badge.svg)](https://github.com/CSCI-GA-2820-SP24-001/wishlists/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-red.svg)](https://www.python.org/)
 
