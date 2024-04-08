@@ -1,3 +1,5 @@
+# pylint: disable=R0801
+
 """
 TestWishlist API Service Test Suite
 """
