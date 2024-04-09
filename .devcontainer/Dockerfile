@@ -1,3 +1,6 @@
+# To do work with Selenium
+FROM rofrano/pipeline-selenium:latest
+
 # Image for a NYU Lab development environment
 FROM rofrano/nyu-devops-base:sp24
 
