@@ -46,14 +46,14 @@ def health_check():
 @app.route("/")
 def index():
     """Root URL response"""
-    return (
-        """Wishlists REST API Service: Wishlists are where users will save items
-            that they want but are not yet ready to buy.
-            Here you can find information about wishlists (/wishlists)
-            and the items (/wishlists/ { wishlist_id }/items) within them. """,
-        status.HTTP_200_OK,
-    )
-
+    # return (
+    #     """Wishlists REST API Service: Wishlists are where users will save items
+    #         that they want but are not yet ready to buy.
+    #         Here you can find information about wishlists (/wishlists)
+    #         and the items (/wishlists/ { wishlist_id }/items) within them. """,
+    #     status.HTTP_200_OK,
+    # )
+    return app.send_static_file("index.html")
 
 ######################################################################
 #  R E S T   A P I   E N D P O I N T S FOR WISHLIST
