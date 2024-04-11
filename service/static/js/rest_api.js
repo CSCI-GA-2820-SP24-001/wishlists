@@ -39,7 +39,7 @@ $(function () {
     }
 
     // ****************************************
-    // Create a Pet
+    // Create a Wishlist
     // ****************************************
 
     $("#create-btn").click(function () {
@@ -81,45 +81,47 @@ $(function () {
 
 
     // ****************************************
-    // TODO: Update a Pet
+    // TODO: Update a Wishlist
     // ****************************************
 
-//     $("#update-btn").click(function () {
+    $("#update-btn").click(function () {
 
-//         let pet_id = $("#pet_id").val();
-//         let name = $("#pet_name").val();
-//         let category = $("#pet_category").val();
-//         let available = $("#pet_available").val() == "true";
-//         let gender = $("#pet_gender").val();
-//         let birthday = $("#pet_birthday").val();
+        let wishlist_id = $("#wishlist_id").val();
+        let title = $("#wishlist_title").val();
+        let description = $("#wishlist_description").val();
+        let count = $("#wishlist_count").val() == "true";
+        let user_id = $("#wishlist_user_id").val();
+        let items = $("#wishlist_items").val();
+        let date = $("#wishlist_date").val();
 
-//         let data = {
-//             "name": name,
-//             "category": category,
-//             "available": available,
-//             "gender": gender,
-//             "birthday": birthday
-//         };
+        let data = {
+            "title": title,
+            "description": description,
+            "items": items,
+            "count": count,
+            "user_id": user_id,
+            "date": date
+        };
 
-//         $("#flash_message").empty();
+        $("#flash_message").empty();
 
-//         let ajax = $.ajax({
-//                 type: "PUT",
-//                 url: `/pets/${pet_id}`,
-//                 contentType: "application/json",
-//                 data: JSON.stringify(data)
-//             })
+        let ajax = $.ajax({
+                type: "PUT",
+                url: `/wishlists/${wishlist_id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
 
-//         ajax.done(function(res){
-//             update_form_data(res)
-//             flash_message("Success")
-//         });
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
 
-//         ajax.fail(function(res){
-//             flash_message(res.responseJSON.message)
-//         });
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
 
-//     });
+    });
 
 //     // ****************************************
 //     // Retrieve a Pet
