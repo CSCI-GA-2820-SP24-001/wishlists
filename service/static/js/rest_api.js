@@ -184,10 +184,10 @@ $(function () {
      });
 
      // ****************************************
-     // Search for a Pet
+     // Search for a wishlist
      // ****************************************
 
-//     $("#search-btn").click(function () {
+    $("#search-btn").click(function () {
 
          let title = $("#wishlist_title").val();
          let description = $("#wishlist_description").val();
@@ -237,7 +237,7 @@ $(function () {
              let firstWishlist = "";
              for(let i = 0; i < res.length; i++) {
                  let wishlist = res[i];
-                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${pet.title}</td><td>${pet.description}</td><td>${pet.user_id}</td><td>${pet.items}</td><td>${pet.date}</td></tr>`;
+                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.title}</td><td>${wishlist.description}</td><td>${wishlist.user_id}</td><td>${wishlist.items}</td><td>${wishlist.date}</td></tr>`;
                  if (i == 0) {
                      firstWishlist = wishlist;
                  }
@@ -258,4 +258,4 @@ $(function () {
          });
 
      });
-
+})
