@@ -9,17 +9,10 @@ $(function () {
         $("#wishlist_id").val(res.id);
         $("#wishlist_title").val(res.title);
         $("#wishlist_user_id").val(res.user_id);
-        // $("#wishlist_count").val(res.count);
+        $("#wishlist_count").val(res.count);
         $("#wishlist_description").val(res.description);
         $("#wishlist_items").val(res.items);
         $("#wishlist_date").val(res.date);
-        // if (res.available == true) {
-        //     $("#wishlist_available").val("true");
-        // } else {
-        //     $("#wishlist_available").val("false");
-        // }
-        // $("#wishlist_gender").val(res.gender);
-        // $("#pet_birthday").val(res.birthday);
     }
 
     /// Clears all form fields
@@ -28,7 +21,7 @@ $(function () {
         $("#wishlist_description").val("");
         $("#wishlist_date").val("");
         $("#wishlist_user_id").val("");
-       // $("#wishlist_count").val("");
+        $("#wishlist_count").val("");
         $("#wishlist_items").val("");
     }
 
@@ -46,7 +39,7 @@ $(function () {
 
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-       // let count = $("#wishlist_count").val() == "true";
+        let count = $("#wishlist_count").val();
         let user_id = $("#wishlist_user_id").val();
         let items = $("#wishlist_items").val();
         let date = $("#wishlist_date").val();
@@ -55,7 +48,7 @@ $(function () {
             "title": title,
             "description": description,
             "items": items,
-          //  "count": count,
+            "count": count,
             "user_id": user_id,
             "date": date
         };
@@ -89,7 +82,7 @@ $(function () {
         let wishlist_id = $("#wishlist_id").val();
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-       // let count = $("#wishlist_count").val() == "true";
+        let count = $("#wishlist_count").val();
         let user_id = $("#wishlist_user_id").val();
         let items = $("#wishlist_items").val();
         let date = $("#wishlist_date").val();
@@ -98,7 +91,7 @@ $(function () {
             "title": title,
             "description": description,
             "items": items,
-        //    "count": count,
+           "count": count,
             "user_id": user_id,
             "date": date
         };
@@ -141,7 +134,7 @@ $(function () {
         })
 
         ajax.done(function(res){
-            //alert(res.toSource())
+            alert(res.toSource())
             update_form_data(res)
             flash_message("Success")
         });
@@ -191,10 +184,10 @@ $(function () {
      });
 
      // ****************************************
-     // Search for a Pet
+     // Search for a wishlist
      // ****************************************
 
-     $("#search-btn").click(function () {
+    $("#search-btn").click(function () {
 
          let title = $("#wishlist_title").val();
          let description = $("#wishlist_description").val();
@@ -230,7 +223,7 @@ $(function () {
          })
 
          ajax.done(function(res){
-             //alert(res.toSource())
+             alert(res.toSource())
              $("#search_results").empty();
              let table = '<table class="table table-striped" cellpadding="10">'
              table += '<thead><tr>'
@@ -244,7 +237,7 @@ $(function () {
              let firstWishlist = "";
              for(let i = 0; i < res.length; i++) {
                  let wishlist = res[i];
-                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${pet.title}</td><td>${pet.description}</td><td>${pet.user_id}</td><td>${pet.items}</td><td>${pet.date}</td></tr>`;
+                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.title}</td><td>${wishlist.description}</td><td>${wishlist.user_id}</td><td>${wishlist.items}</td><td>${wishlist.date}</td></tr>`;
                  if (i == 0) {
                      firstWishlist = wishlist;
                  }
@@ -265,5 +258,4 @@ $(function () {
          });
 
      });
-
- })
+})
