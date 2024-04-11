@@ -9,7 +9,7 @@ $(function () {
         $("#wishlist_id").val(res.id);
         $("#wishlist_title").val(res.title);
         $("#wishlist_user_id").val(res.user_id);
-        $("#wishlist_count").val(res.count);
+        // $("#wishlist_count").val(res.count);
         $("#wishlist_description").val(res.description);
         $("#wishlist_items").val(res.items);
         $("#wishlist_date").val(res.date);
@@ -28,7 +28,7 @@ $(function () {
         $("#wishlist_description").val("");
         $("#wishlist_date").val("");
         $("#wishlist_user_id").val("");
-        $("#wishlist_count").val("");
+       // $("#wishlist_count").val("");
         $("#wishlist_items").val("");
     }
 
@@ -46,7 +46,7 @@ $(function () {
 
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-        let count = $("#wishlist_count").val() == "true";
+       // let count = $("#wishlist_count").val() == "true";
         let user_id = $("#wishlist_user_id").val();
         let items = $("#wishlist_items").val();
         let date = $("#wishlist_date").val();
@@ -55,7 +55,7 @@ $(function () {
             "title": title,
             "description": description,
             "items": items,
-            "count": count,
+          //  "count": count,
             "user_id": user_id,
             "date": date
         };
@@ -89,7 +89,7 @@ $(function () {
         let wishlist_id = $("#wishlist_id").val();
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-        let count = $("#wishlist_count").val() == "true";
+       // let count = $("#wishlist_count").val() == "true";
         let user_id = $("#wishlist_user_id").val();
         let items = $("#wishlist_items").val();
         let date = $("#wishlist_date").val();
@@ -98,7 +98,7 @@ $(function () {
             "title": title,
             "description": description,
             "items": items,
-            "count": count,
+        //    "count": count,
             "user_id": user_id,
             "date": date
         };
@@ -123,62 +123,62 @@ $(function () {
 
     });
 
-//     // ****************************************
-//     // Retrieve a Pet
-//     // ****************************************
+    // ****************************************
+    // Retrieve a Wishlist
+    // ****************************************
 
-//     $("#retrieve-btn").click(function () {
+    $("#retrieve-btn").click(function () {
 
-//         let pet_id = $("#pet_id").val();
+        let wishlist_id = $("#wishlist_id").val();
 
-//         $("#flash_message").empty();
+        $("#flash_message").empty();
 
-//         let ajax = $.ajax({
-//             type: "GET",
-//             url: `/pets/${pet_id}`,
-//             contentType: "application/json",
-//             data: ''
-//         })
+        let ajax = $.ajax({
+            type: "GET",
+            url: `/wishlists/${wishlist_id}`,
+            contentType: "application/json",
+            data: ''
+        })
 
-//         ajax.done(function(res){
-//             //alert(res.toSource())
-//             update_form_data(res)
-//             flash_message("Success")
-//         });
+        ajax.done(function(res){
+            //alert(res.toSource())
+            update_form_data(res)
+            flash_message("Success")
+        });
 
-//         ajax.fail(function(res){
-//             clear_form_data()
-//             flash_message(res.responseJSON.message)
-//         });
+        ajax.fail(function(res){
+            clear_form_data()
+            flash_message(res.responseJSON.message)
+        });
 
-//     });
+    });
 
-//     // ****************************************
-//     // Delete a Pet
-//     // ****************************************
+     // ****************************************
+     // Delete a Wishlist
+     // ****************************************
 
-//     $("#delete-btn").click(function () {
+     $("#delete-btn").click(function () {
 
-//         let pet_id = $("#pet_id").val();
+         let wishlist_id = $("#wishlist_id").val();
 
-//         $("#flash_message").empty();
+         $("#flash_message").empty();
 
-//         let ajax = $.ajax({
-//             type: "DELETE",
-//             url: `/pets/${pet_id}`,
-//             contentType: "application/json",
-//             data: '',
-//         })
+         let ajax = $.ajax({
+             type: "DELETE",
+             url: `/wishlists/${wishlist_id}`,
+             contentType: "application/json",
+             data: '',
+         })
 
-//         ajax.done(function(res){
-//             clear_form_data()
-//             flash_message("Pet has been Deleted!")
-//         });
+         ajax.done(function(res){
+             clear_form_data()
+             flash_message("Wishlist has been Deleted!")
+         });
 
-//         ajax.fail(function(res){
-//             flash_message("Server error!")
-//         });
-//     });
+         ajax.fail(function(res){
+             flash_message("Server error!")
+         });
+     });
 
 //     // ****************************************
 //     // Clear the form
