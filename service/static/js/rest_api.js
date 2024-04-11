@@ -180,90 +180,90 @@ $(function () {
          });
      });
 
-//     // ****************************************
-//     // Clear the form
-//     // ****************************************
+     // ****************************************
+     // Clear the form
+     // ****************************************
 
-//     $("#clear-btn").click(function () {
-//         $("#pet_id").val("");
-//         $("#flash_message").empty();
-//         clear_form_data()
-//     });
+     $("#clear-btn").click(function () {
+         $("#wishlist_id").val("");
+         $("#flash_message").empty();
+         clear_form_data()
+     });
 
-//     // ****************************************
-//     // Search for a Pet
-//     // ****************************************
+     // ****************************************
+     // Search for a Pet
+     // ****************************************
 
-//     $("#search-btn").click(function () {
+     $("#search-btn").click(function () {
 
-//         let name = $("#pet_name").val();
-//         let category = $("#pet_category").val();
-//         let available = $("#pet_available").val() == "true";
+         let title = $("#wishlist_title").val();
+         let description = $("#wishlist_description").val();
+         let user_id = $("#wishlist_user_id").val();
 
-//         let queryString = ""
+         let queryString = ""
 
-//         if (name) {
-//             queryString += 'name=' + name
-//         }
-//         if (category) {
-//             if (queryString.length > 0) {
-//                 queryString += '&category=' + category
-//             } else {
-//                 queryString += 'category=' + category
-//             }
-//         }
-//         if (available) {
-//             if (queryString.length > 0) {
-//                 queryString += '&available=' + available
-//             } else {
-//                 queryString += 'available=' + available
-//             }
-//         }
+         if (title) {
+             queryString += 'title=' + title
+         }
+         if (description) {
+             if (queryString.length > 0) {
+                 queryString += '&description=' + description
+             } else {
+                 queryString += 'description=' + description
+             }
+         }
+         if (user_id) {
+             if (queryString.length > 0) {
+                 queryString += '&user_id=' + user_id
+             } else {
+                 queryString += 'user_id=' + user_id
+             }
+         }
 
-//         $("#flash_message").empty();
+         $("#flash_message").empty();
 
-//         let ajax = $.ajax({
-//             type: "GET",
-//             url: `/pets?${queryString}`,
-//             contentType: "application/json",
-//             data: ''
-//         })
+         let ajax = $.ajax({
+             type: "GET",
+             url: `/wishlists?${queryString}`,
+             contentType: "application/json",
+             data: ''
+         })
 
-//         ajax.done(function(res){
-//             //alert(res.toSource())
-//             $("#search_results").empty();
-//             let table = '<table class="table table-striped" cellpadding="10">'
-//             table += '<thead><tr>'
-//             table += '<th class="col-md-2">ID</th>'
-//             table += '<th class="col-md-2">Name</th>'
-//             table += '<th class="col-md-2">Category</th>'
-//             table += '<th class="col-md-2">Available</th>'
-//             table += '<th class="col-md-2">Gender</th>'
-//             table += '<th class="col-md-2">Birthday</th>'
-//             table += '</tr></thead><tbody>'
-//             let firstPet = "";
-//             for(let i = 0; i < res.length; i++) {
-//                 let pet = res[i];
-//                 table +=  `<tr id="row_${i}"><td>${pet.id}</td><td>${pet.name}</td><td>${pet.category}</td><td>${pet.available}</td><td>${pet.gender}</td><td>${pet.birthday}</td></tr>`;
-//                 if (i == 0) {
-//                     firstPet = pet;
-//                 }
-//             }
-//             table += '</tbody></table>';
-//             $("#search_results").append(table);
+         ajax.done(function(res){
+             //alert(res.toSource())
+             $("#search_results").empty();
+             let table = '<table class="table table-striped" cellpadding="10">'
+             table += '<thead><tr>'
+             table += '<th class="col-md-2">ID</th>'
+             table += '<th class="col-md-2">Title</th>'
+             table += '<th class="col-md-2">Description</th>'
+             table += '<th class="col-md-2">User_ID</th>'
+             table += '<th class="col-md-2">Items</th>'
+             table += '<th class="col-md-2">Date</th>'
+             table += '</tr></thead><tbody>'
+             let firstWishlist = "";
+             for(let i = 0; i < res.length; i++) {
+                 let wishlist = res[i];
+                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${pet.title}</td><td>${pet.description}</td><td>${pet.user_id}</td><td>${pet.items}</td><td>${pet.date}</td></tr>`;
+                 if (i == 0) {
+                     firstWishlist = wishlist;
+                 }
+             }
+             table += '</tbody></table>';
+             $("#search_results").append(table);
 
-//             // copy the first result to the form
-//             if (firstPet != "") {
-//                 update_form_data(firstPet)
-//             }
+             // copy the first result to the form
+             if (firstWishlist != "") {
+                 update_form_data(firstWishlist)
+             }
 
-//             flash_message("Success")
-//         });
+             flash_message("Success")
+         });
 
-//         ajax.fail(function(res){
-//             flash_message(res.responseJSON.message)
-//         });
+         ajax.fail(function(res){
+             flash_message(res.responseJSON.message)
+         });
 
-//     });
+     });
 
  })
