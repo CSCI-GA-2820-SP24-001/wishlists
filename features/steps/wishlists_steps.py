@@ -49,7 +49,7 @@ def step_impl(context):
             "title": row["title"],
             "description": row["description"],
             "items": row["items"],
-            # "count": row["count"],
+            "count": row["count"],
             "date": row["date"],
             "user_id": row["user_id"],
         }
