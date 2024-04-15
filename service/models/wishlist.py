@@ -62,7 +62,7 @@ class Wishlist(db.Model, PersistentBase):
             self.description = data["description"]
             self.count = data["count"]
             self.date = date.fromisoformat(data["date"])
-            item_list = data.get("items", [])
+            item_list = data.get("items")
             for json_item in item_list:
                 item = Item()
                 item.deserialize(json_item)
