@@ -30,7 +30,6 @@ HTTP_200_OK = 200
 HTTP_201_CREATED = 201
 HTTP_204_NO_CONTENT = 204
 
-
 @given("the following wishlists")
 def step_impl(context):
     """Delete all Wishlists and load new ones"""
@@ -48,10 +47,9 @@ def step_impl(context):
         payload = {
             "title": row["title"],
             "description": row["description"],
-            "items": row["items"],
-            "count": row["count"],
-            "date": row["date"],
             "user_id": row["user_id"],
+            "count": row["count"],
+            "date": row["date"]
         }
 
         context.resp = requests.post(rest_endpoint, json=payload)
