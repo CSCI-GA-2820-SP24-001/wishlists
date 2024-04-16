@@ -8,9 +8,9 @@ $(function () {
     function update_form_data(res) {
         $("#wishlist_id").val(res.id);
         $("#wishlist_title").val(res.title);
+        $("#wishlist_description").val(res.description);
         $("#wishlist_user_id").val(res.user_id);
         $("#wishlist_count").val(res.count);
-        $("#wishlist_description").val(res.description);
         $("#wishlist_date").val(res.date);
     }
 
@@ -18,9 +18,9 @@ $(function () {
     function clear_form_data() {
         $("#wishlist_title").val("");
         $("#wishlist_description").val("");
-        $("#wishlist_date").val("");
         $("#wishlist_user_id").val("");
         $("#wishlist_count").val("");
+        $("#wishlist_date").val("");
     }
 
     // Updates the flash message area
@@ -37,15 +37,15 @@ $(function () {
 
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-        let count = $("#wishlist_count").val();
         let user_id = $("#wishlist_user_id").val();
+        let count = $("#wishlist_count").val();
         let date = $("#wishlist_date").val();
 
         let data = {
             "title": title,
             "description": description,
-            "count": count,
             "user_id": user_id,
+            "count": count,
             "date": date
         };
 
@@ -78,15 +78,15 @@ $(function () {
         let wishlist_id = $("#wishlist_id").val();
         let title = $("#wishlist_title").val();
         let description = $("#wishlist_description").val();
-        let count = $("#wishlist_count").val();
         let user_id = $("#wishlist_user_id").val();
+        let count = $("#wishlist_count").val();
         let date = $("#wishlist_date").val();
 
         let data = {
             "title": title,
             "description": description,
-           "count": count,
             "user_id": user_id,
+            "count": count,
             "date": date
         };
 
@@ -224,13 +224,14 @@ $(function () {
              table += '<th class="col-md-2">ID</th>'
              table += '<th class="col-md-2">Title</th>'
              table += '<th class="col-md-2">Description</th>'
-             table += '<th class="col-md-2">User_ID</th>'
+             table += '<th class="col-md-2">User ID</th>'
+             table += '<th class="col-md-2">Count</th>'
              table += '<th class="col-md-2">Date</th>'
              table += '</tr></thead><tbody>'
              let firstWishlist = "";
              for(let i = 0; i < res.length; i++) {
                  let wishlist = res[i];
-                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.title}</td><td>${wishlist.description}</td><td>${wishlist.user_id}</td><td>${wishlist.date}</td></tr>`;
+                 table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.title}</td><td>${wishlist.description}</td><td>${wishlist.user_id}</td><td>${wishlist.count}</td><td>${wishlist.date}</td></tr>`;
                  if (i == 0) {
                      firstWishlist = wishlist;
                  }
