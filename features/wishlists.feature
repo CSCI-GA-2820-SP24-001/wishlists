@@ -26,7 +26,7 @@ Scenario: Create a Wishlist
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
-    And I press the "Clear" button
+    And I press the "Clearform" button
     Then the "Id" field should be empty
     And the "Title" field should be empty
     And the "Description" field should be empty
@@ -40,4 +40,24 @@ Scenario: Create a Wishlist
     And I should see "2020-12-12" in the "Date" field
     
 
-
+Scenario: Update a Wishlist
+    When I visit the "Home Page"
+    And I set the "Title" to "summer"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Title" field
+    And I should see "items for summer" in the "Description" field
+    When I change "Title" to "trip"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Title" in the "Trip" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Trip" in the results
+    And I should not see "summer" in the results
