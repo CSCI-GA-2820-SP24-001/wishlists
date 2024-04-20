@@ -30,6 +30,7 @@ HTTP_200_OK = 200
 HTTP_201_CREATED = 201
 HTTP_204_NO_CONTENT = 204
 
+
 @given("the following wishlists")
 def step_impl(context):
     """Delete all Wishlists and load new ones"""
@@ -49,8 +50,20 @@ def step_impl(context):
             "description": row["description"],
             "user_id": row["user_id"],
             "count": row["count"],
-            "date": row["date"]
+            "date": row["date"],
         }
 
         context.resp = requests.post(rest_endpoint, json=payload)
         assert context.resp.status_code == HTTP_201_CREATED
+
+
+@given("the server is started")
+def step_impl(context):
+    context.base_url = os.getenv("BASE_URL", "http://localhost:8080")
+    context.resp = requests.get(context.base_url + "/")
+    assert context.resp.status_code == 200
+
+
+@then('I should see "{message}"')
+def step_impl(context, message):
+    assert message in str(context.resp.text)

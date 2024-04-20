@@ -257,7 +257,7 @@ $(function () {
      // Action for a wishlist (clear a wishlist)
      // ****************************************
      
-    $("#clearwishlist-btn").click(function () {
+    $("#clearwish-btn").click(function () {
          let wishlist_id = $("#wishlist_id").val();
 
          $("#flash_message").empty();
