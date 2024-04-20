@@ -190,35 +190,38 @@ $(function () {
          let queryString = ""
 
          if (title) {
-             queryString += 'title=' + title
+             queryString += '?name=' + title
+         } else {
+            queryString = ""
          }
-         if (description) {
-             if (queryString.length > 0) {
-                 queryString += '&description=' + description
-             } else {
-                 queryString += 'description=' + description
-             }
-         }
-         if (user_id) {
-             if (queryString.length > 0) {
-                 queryString += '&user_id=' + user_id
-             } else {
-                 queryString += 'user_id=' + user_id
-             }
-         }
+        //  if (description) {
+        //      if (queryString.length > 0) {
+        //          queryString += '&description=' + description
+        //      } else {
+        //          queryString += 'description=' + description
+        //      }
+        //  }
+        //  if (user_id) {
+        //      if (queryString.length > 0) {
+        //          queryString += '&user_id=' + user_id
+        //      } else {
+        //          queryString += 'user_id=' + user_id
+        //      }
+        //  }
 
          $("#flash_message").empty();
 
          let ajax = $.ajax({
              type: "GET",
-             url: `/wishlists?${queryString}`,
+             url: `/wishlists${queryString}`,
              contentType: "application/json",
              data: ''
          })
 
          ajax.done(function(res){
              alert(res.toSource())
-             $("#search_results").empty();
+            // $("#search_results").empty();
+             flash_message("Success")
              let table = '<table class="table table-striped" cellpadding="10">'
              table += '<thead><tr>'
              table += '<th class="col-md-2">ID</th>'
