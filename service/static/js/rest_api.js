@@ -128,7 +128,7 @@ $(function () {
         })
 
         ajax.done(function(res){
-            alert(res.toSource())
+            //alert(res.toSource())
             update_form_data(res)
             flash_message("Success")
         });
@@ -219,7 +219,7 @@ $(function () {
          })
 
          ajax.done(function(res){
-             alert(res.toSource())
+             //alert(res.toSource())
             $("#search_results").empty();
              //flash_message("Success")
              let table = '<table class="table table-striped" cellpadding="10">'
