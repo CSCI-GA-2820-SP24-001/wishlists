@@ -22,7 +22,7 @@ Scenario: Create a Wishlist
     And I set the "Description" to "Shopping list"
     And I set the "User ID" to "1234"
     And I set the "Count" to "8"
-    And I set the "Date" to "2020-12-12"
+    And I set the "Date" to "12-12-2020"
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -48,16 +48,39 @@ Scenario: Update a Wishlist
     And I should see "summer" in the "Title" field
     And I should see "items for summer" in the "Description" field
     When I change "Title" to "trip"
+    And I change "Description" to "updaed trip"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
-    And I press the "Clear" button
+    And I press the "Clearform" button
     And I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
-    And I should see "Title" in the "Trip" field
-    When I press the "Clear" button
+    And I should see "trip" in the "Title" field
+    When I press the "Clearform" button
     And I press the "Search" button
     Then I should see the message "Success"
-    And I should see "Trip" in the results
+    And I should see "trip" in the results
     And I should not see "summer" in the results
+
+
+    # delete wishlist here
+Scenario: Delete a Wishlist
+    When I visit the "Home Page"
+    And I set the "Title" to "Christmas"
+    And I set the "Description" to "Shopping list"
+    And I set the "User ID" to "1234"
+    And I set the "Count" to "8"
+    And I set the "Date" to "12-12-2020"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clearform" button
+    And I paste the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Wishlist has been Deleted!"
+    When I copy the "Id" field
+    And I press the "Clearform" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "404 Not Found"

@@ -128,7 +128,7 @@ $(function () {
         })
 
         ajax.done(function(res){
-            alert(res.toSource())
+            //alert(res.toSource())
             update_form_data(res)
             flash_message("Success")
         });
@@ -190,7 +190,7 @@ $(function () {
          let queryString = ""
 
          if (title) {
-             queryString += '?name=' + title
+             queryString += '?name=' + title //updated to name on purpose based on previous related issue
          } else {
             queryString = ""
          }
@@ -219,9 +219,9 @@ $(function () {
          })
 
          ajax.done(function(res){
-             alert(res.toSource())
-            // $("#search_results").empty();
-             flash_message("Success")
+             //alert(res.toSource())
+            $("#search_results").empty();
+             //flash_message("Success")
              let table = '<table class="table table-striped" cellpadding="10">'
              table += '<thead><tr>'
              table += '<th class="col-md-2">ID</th>'
