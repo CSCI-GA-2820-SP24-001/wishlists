@@ -220,8 +220,8 @@ $(function () {
 
          ajax.done(function(res){
              alert(res.toSource())
-            // $("#search_results").empty();
-             flash_message("Success")
+            $("#search_results").empty();
+             //flash_message("Success")
              let table = '<table class="table table-striped" cellpadding="10">'
              table += '<thead><tr>'
              table += '<th class="col-md-2">ID</th>'

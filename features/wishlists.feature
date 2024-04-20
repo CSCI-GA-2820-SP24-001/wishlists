@@ -61,3 +61,6 @@ Scenario: Update a Wishlist
     Then I should see the message "Success"
     And I should see "Trip" in the results
     And I should not see "summer" in the results
+
+
+    # delete wishlist here
