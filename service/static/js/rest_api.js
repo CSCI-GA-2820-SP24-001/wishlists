@@ -190,7 +190,7 @@ $(function () {
          let queryString = ""
 
          if (title) {
-             queryString += '?name=' + title
+             queryString += '?name=' + title //updated to name on purpose based on previous related issue
          } else {
             queryString = ""
          }
