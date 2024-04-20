@@ -5,11 +5,11 @@ Feature: The store service back-end
 
 Background:
     Given the following wishlists
-        | title      | description                | items | date       | user_id | count |
-        | summer     | items for summer           | 2     | 2019-11-18 | 5431    | 5     |
-        | trip       | items for hawaii           | 5     | 2020-08-13 | 8231    | 6     |
-        | birthday   | items for spring birthday  | 7     | 2021-04-01 | 6783    | 7     |
-        | holidays   | items for christmas        | 1     | 2018-06-04 | 2035    | 3     |
+        | title      | description                | date       | user_id | count |
+        | summer     | items for summer           | 2019-11-18 | 5431    | 5     |
+        | trip       | items for hawaii           | 2020-08-13 | 8231    | 6     |
+        | birthday   | items for spring birthday  | 2021-04-01 | 6783    | 7     |
+        | holidays   | items for christmas        | 2018-06-04 | 2035    | 3     |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -39,7 +39,6 @@ Scenario: Create a Wishlist
     And I should see "8" in the "Count" field
     And I should see "2020-12-12" in the "Date" field
     
-
 Scenario: Update a Wishlist
     When I visit the "Home Page"
     And I set the "Title" to "summer"
@@ -48,7 +47,7 @@ Scenario: Update a Wishlist
     And I should see "summer" in the "Title" field
     And I should see "items for summer" in the "Description" field
     When I change "Title" to "trip"
-    And I change "Description" to "updaed trip"
+    And I change "Description" to "updated trip"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -63,8 +62,6 @@ Scenario: Update a Wishlist
     And I should see "trip" in the results
     And I should not see "summer" in the results
 
-
-    # delete wishlist here
 Scenario: Delete a Wishlist
     When I visit the "Home Page"
     And I set the "Title" to "Christmas"
@@ -84,3 +81,36 @@ Scenario: Delete a Wishlist
     And I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see the message "404 Not Found"
+
+Scenario: List all Wishlists
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the results
+    And I should see "trip" in the results
+    And I should not see "fall" in the results
+
+Scenario: Search (query) for items for summer
+    When I visit the "Home Page"
+    And I set the "Description" to "items for summer"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the results
+    And I should not see "Christmas" in the results
+
+Scenario: Read / get a Wishlist
+    When I visit the "Home Page"
+    And I set the "Title" to "summer"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Title" field
+    And I should see "items for summer" in the "Description" field
+    When I copy the "Id" field
+    And I press the "Clearform" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Title" field
+    And I should see "items for summer" in the "Description" field
+
+Scenario: Clear a Wishlist

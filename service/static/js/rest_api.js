@@ -266,7 +266,7 @@ $(function () {
          $("#flash_message").empty();
 
          let ajax = $.ajax({
-             type: "POST", // or PUT or PATCH depending on your API design
+             type: "PUT", // or PUT or PATCH depending on your API design
              url: `/wishlists/${wishlist_id}/clear`, // or another endpoint designed for clearing a wishlist
              contentType: "application/json",
              data: ''
@@ -274,7 +274,7 @@ $(function () {
 
          ajax.done(function (res) {
              clear_form_data()
-             flash_message("Wishlist cleared successfully.")
+             flash_message("Wishlist cleared successfully!")
          });
     
          ajax.fail(function(res){
