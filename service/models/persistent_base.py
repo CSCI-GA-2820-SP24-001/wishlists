@@ -49,7 +49,7 @@ class PersistentBase:
 
     def update(self) -> None:
         """
-        Updates a Account to the database
+        Updates a resource to the database
         """
         logger.info("Updating %s", self)
         if not self.id:
