@@ -181,7 +181,8 @@ def duplicate_wishlists(wishlist_id):
 
     wishlist = Wishlist.find(wishlist_id)
     if wishlist:
-        wishlist.duplicate()
+        wishlist.id = None
+        wishlist.create()
 
     message = wishlist.serialize()
 
