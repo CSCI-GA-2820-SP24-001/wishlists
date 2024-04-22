@@ -24,6 +24,7 @@ and Delete Wishlist from the inventory of wishlists in the WishlistShop
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
 from service.models.item import Item
+from datetime import date, datetime
 from service.models.wishlist import Wishlist
 from service.common import status  # HTTP Status Codes
 
@@ -170,26 +171,41 @@ def get_wishlists(wishlist_id):
 
 
 # Duplicate wishlist
-@app.route("/wishlists/<int:wishlist_id>", methods=["POST"])
+@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST"])
 def duplicate_wishlists(wishlist_id):
     """
     Duplicate a Wishlist
 
     This endpoint will delete a Wishlist based the id specified in the path
     """
-    app.logger.info("Request to duplicate wishlist with id: %d", wishlist_id)
+    app.logger.info("Request to duplicate a wishlist")
+    check_content_type("application/json")
 
-    wishlist = Wishlist.find(wishlist_id)
-    if wishlist:
-        wishlist.id = None
-        wishlist.create()
+    old_wishlist = Wishlist.find(wishlist_id)
+    if not old_wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist {wishlist_id} does not exist",
+        )
+    old = old_wishlist.serialize()
+    new_list = {}
+    for key, val in old.items():
+        if key not in ["id", "title", "user_id", "count", "date", "items"]:
+            new_list[key] = val
+    new_list["title"] = old["title"] + " COPY"
+    new_list["items"] = old["items"]
+    new_list["date"] = str(date.today())
+    wishlist_new = Wishlist()
+    wishlist_new.deserialize(new_list)
+    wishlist_new.create()
 
-    message = wishlist.serialize()
+    location_url = url_for(Wishlist, wishlist_id=wishlist_new.id, _external=True)
 
-    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
-
-    app.logger.info("Wishlist with ID: %d duplicated.", wishlist_id)
-    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+    return (
+        new_list.serialize(),
+        status.HTTP_201_CREATED,
+        {"Location": location_url},
+    )
 
 
 ######################################################################

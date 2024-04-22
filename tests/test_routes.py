@@ -364,21 +364,26 @@ class TestWishlistService(TestCase):
     # test for duplicating
     def test_duplicate_wishlist(self):
         """It should duplicate an existing Wishlist"""
-        test_wishlist = WishlistFactory()
-        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
-        response = self.client.post(BASE_URL, json=test_wishlist.serialize())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        test_wishlist = response.get_json()
+        wishlists = self._create_wishlists(11)
+        prev_wishlist = wishlists[0]
 
-        # Make sure location header is set
-        location = response.headers.get("Location", None)
-        self.assertIsNotNone(location)
+        resp = self.client.post(
+            f"{BASE_URL}/{prev_wishlist.id}/duplicate",
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        new_id = data["id"]
 
-        new_wishlist = response.get_json()
-        logging.debug(new_wishlist)
-        # new_wishlist = test_wishlist
-        new_wishlist["id"] += 1000
-        response = self.client.post(BASE_URL, json=new_wishlist)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        new_wishlist = response.get_json()
-        self.assertEqual(test_wishlist["title"], new_wishlist["title"])
+        resp = self.client.get(f"{BASE_URL}/{new_id}")
+        data = resp.get_json()
+
+        self.assertNotEqual(data["id"], prev_wishlist.id)
+        self.assertEqual(data["title"], prev_wishlist.title + " COPY")
+        self.assertEqual(type(data["items"]), [])
+        self.assertNotEqual(data["date"], prev_wishlist)
+        self.assertEqual(data["count"], prev_wishlist.count)
+        self.assertEqual(data["user_id"], prev_wishlist.user_id)
+
+        resp = self.client.post(f"{BASE_URL}/0/duplicate")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
