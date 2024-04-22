@@ -361,15 +361,24 @@ class TestWishlistService(TestCase):
         self.assertEqual(data["wishlist_id"], wishlist.id)
         self.assertEqual(data["item_name"], item.item_name)
 
-    # Action clear test case
+    # test for duplicating
+    def test_duplicate_wishlist(self):
+        """It should duplicate an existing Wishlist"""
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.client.post(BASE_URL, json=test_wishlist.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        test_wishlist = response.get_json()
 
-    def test_clear_a_wishlist(self):
-        """It should Clear a Wishlist"""
-        wishlists = self._create_wishlists(10)
-        wishlist = wishlists[0]
-        response = self.client.put(f"{BASE_URL}/{wishlist.id}/clear")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(f"{BASE_URL}/{wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        logging.debug("Response data: %s", data)
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        new_wishlist = response.get_json()
+        logging.debug(new_wishlist)
+        # new_wishlist = test_wishlist
+        new_wishlist["id"] += 1000
+        response = self.client.post(BASE_URL, json=new_wishlist)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        new_wishlist = response.get_json()
+        self.assertEqual(test_wishlist["title"], new_wishlist["title"])

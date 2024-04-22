@@ -55,6 +55,7 @@ def index():
     # )
     return app.send_static_file("index.html")
 
+
 ######################################################################
 #  R E S T   A P I   E N D P O I N T S FOR WISHLIST
 ######################################################################
@@ -166,6 +167,28 @@ def get_wishlists(wishlist_id):
 
     app.logger.info("Returning wishlist: %s", wishlist.title)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
+
+# Duplicate wishlist
+@app.route("/wishlists/<int:wishlist_id>", methods=["POST"])
+def duplicate_wishlists(wishlist_id):
+    """
+    Duplicate a Wishlist
+
+    This endpoint will delete a Wishlist based the id specified in the path
+    """
+    app.logger.info("Request to duplicate wishlist with id: %d", wishlist_id)
+
+    wishlist = Wishlist.find(wishlist_id)
+    if wishlist:
+        wishlist.duplicate()
+
+    message = wishlist.serialize()
+
+    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
+
+    app.logger.info("Wishlist with ID: %d duplicated.", wishlist_id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################
@@ -326,31 +349,3 @@ def error(status_code, reason):
     """Logs the error and then aborts"""
     app.logger.error(reason)
     abort(status_code, reason)
-
-
-# Action : Clear a wishlist
-
-
-@app.route("/wishlists/<int:wishlist_id>/clear", methods=["PUT"])
-def clear_wishlists(wishlist_id):
-    """
-    Clearing a Wishlist
-
-    This endpoint will clear a wishlist
-    """
-    app.logger.info("Request to clear wishlist with id: %d", wishlist_id)
-
-    wishlist = Wishlist.find(wishlist_id)
-    if not wishlist:
-        error(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with id '{wishlist_id}' was not found.",
-        )
-
-    # At this point you would execute code to clear the wishlist
-    # For the moment, we will just set them to unavailable
-
-    wishlist.update()
-
-    app.logger.info("Wishlist with ID: %d has been cleared.", wishlist_id)
-    return wishlist.serialize(), status.HTTP_200_OK

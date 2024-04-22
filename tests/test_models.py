@@ -107,6 +107,39 @@ class TestWishlist(TestCase):
         wishlist = Wishlist.find(wishlist.id)
         self.assertEqual(wishlist.title, "Test Update Wishlist")
 
+    # def test_duplicate_wishlist(self):
+    #     """Should test if a wishlist was duplicated"""
+
+    #     self.assertIsNotNone(wishlist.id)
+    #     self.assertEqual(wishlist.title, "Tester Wishlist")
+    #     new_wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(new_wishlist.title, wishlist.title)
+
+    #     fake_wishlist = WishlistFactory()
+    #     # pylint: disable=unexpected-keyword-arg
+    #     wishlist = Wishlist(
+    #         title=fake_wishlist.title,
+    #         description=fake_wishlist.description,
+    #         items=fake_wishlist.items,
+    #         date=fake_wishlist.date,
+    #         count=fake_wishlist.count,
+    #         user_id=fake_wishlist.user_id,
+    #     )
+    #     self.assertIsNotNone(wishlist)
+    #     self.assertEqual(wishlist.id, None)
+    #     self.assertEqual(wishlist.title, fake_wishlist.title)
+    #     self.assertEqual(wishlist.description, fake_wishlist.description)
+    #     self.assertEqual(wishlist.count, fake_wishlist.count)
+    #     self.assertEqual(wishlist.date, fake_wishlist.date)
+    #     self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
+
+    # self.assertEqual(new_wishlist.title, wishlist.title)
+    # self.assertNotEqual(new_wishlist.id, wishlist.id)
+    # self.assertEqual(new_wishlist.description, wishlist.description)
+    # self.assertEqual(new_wishlist.count, wishlist.count)
+    # self.assertEqual(new_wishlist.date, wishlist.date)
+    # self.assertEqual(new_wishlist.user_id, wishlist.user_id)
+
     @patch("service.models.db.session.commit")
     def test_update_wishlist_failed(self, exception_mock):
         """It should not update a wishlist on database error"""
