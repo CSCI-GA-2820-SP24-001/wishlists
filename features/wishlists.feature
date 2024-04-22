@@ -114,3 +114,17 @@ Scenario: Read / get a Wishlist
     And I should see "items for summer" in the "Description" field
 
 Scenario: Clear a Wishlist
+    When I visit the "Home Page"
+    And I set the "Title" to "summer"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Title" field
+    And I should see "items for summer" in the "Description" field
+    When I press the "Clearwish" button
+    Then I should see the message "Wishlist cleared successfully!"
+    And the "Title" field should be empty
+    And the "Description" field should be empty
+    When I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Title" field
+    And I should see "items for summer" in the "Description" field
