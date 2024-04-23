@@ -20,7 +20,7 @@ Wishlist Store Service
 This service implements a REST API that allows you to Create, Read, Update
 and Delete Wishlist from the inventory of wishlists in the WishlistShop
 """
-
+from datetime import date
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
 from service.models.item import Item
@@ -54,6 +54,7 @@ def index():
     #     status.HTTP_200_OK,
     # )
     return app.send_static_file("index.html")
+
 
 ######################################################################
 #  R E S T   A P I   E N D P O I N T S FOR WISHLIST
@@ -166,6 +167,44 @@ def get_wishlists(wishlist_id):
 
     app.logger.info("Returning wishlist: %s", wishlist.title)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
+
+# Duplicate wishlist
+@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST"])
+def duplicate_wishlists(wishlist_id):
+    """
+    Duplicate a Wishlist
+
+    This endpoint will delete a Wishlist based the id specified in the path
+    """
+    app.logger.info("Request to duplicate a wishlist")
+    check_content_type("application/json")
+
+    old_wishlist = Wishlist.find(wishlist_id)
+    if not old_wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist {wishlist_id} does not exist",
+        )
+    old = old_wishlist.serialize()
+    new_list = {}
+    for key, val in old.items():
+        if key not in ["id", "title", "user_id", "count", "date", "items"]:
+            new_list[key] = val
+    new_list["title"] = old["title"] + " COPY"
+    new_list["items"] = old["items"]
+    new_list["date"] = str(date.today())
+    wishlist_new = Wishlist()
+    wishlist_new.deserialize(new_list)
+    wishlist_new.create()
+
+    location_url = url_for(Wishlist, wishlist_id=wishlist_new.id, _external=True)
+
+    return (
+        new_list.serialize(),
+        status.HTTP_201_CREATED,
+        {"Location": location_url},
+    )
 
 
 ######################################################################
@@ -326,31 +365,3 @@ def error(status_code, reason):
     """Logs the error and then aborts"""
     app.logger.error(reason)
     abort(status_code, reason)
-
-
-# Action : Clear a wishlist
-
-
-@app.route("/wishlists/<int:wishlist_id>/clear", methods=["PUT"])
-def clear_wishlists(wishlist_id):
-    """
-    Clearing a Wishlist
-
-    This endpoint will clear a wishlist
-    """
-    app.logger.info("Request to clear wishlist with id: %d", wishlist_id)
-
-    wishlist = Wishlist.find(wishlist_id)
-    if not wishlist:
-        error(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with id '{wishlist_id}' was not found.",
-        )
-
-    # At this point you would execute code to clear the wishlist
-    # For the moment, we will just set them to unavailable
-
-    wishlist.update()
-
-    app.logger.info("Wishlist with ID: %d has been cleared.", wishlist_id)
-    return wishlist.serialize(), status.HTTP_200_OK

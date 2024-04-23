@@ -107,6 +107,9 @@ class TestWishlist(TestCase):
         wishlist = Wishlist.find(wishlist.id)
         self.assertEqual(wishlist.title, "Test Update Wishlist")
 
+    # def test_duplicate_wishlist(self):
+    #     """Should test if a wishlist was duplicated"""
+
     @patch("service.models.db.session.commit")
     def test_update_wishlist_failed(self, exception_mock):
         """It should not update a wishlist on database error"""

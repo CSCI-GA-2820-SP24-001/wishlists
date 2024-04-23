@@ -361,15 +361,29 @@ class TestWishlistService(TestCase):
         self.assertEqual(data["wishlist_id"], wishlist.id)
         self.assertEqual(data["item_name"], item.item_name)
 
-    # Action clear test case
+    # test for duplicating
+    def test_duplicate_wishlist(self):
+        """It should duplicate an existing Wishlist"""
+        wishlists = self._create_wishlists(11)
+        prev_wishlist = wishlists[0]
 
-    def test_clear_a_wishlist(self):
-        """It should Clear a Wishlist"""
-        wishlists = self._create_wishlists(10)
-        wishlist = wishlists[0]
-        response = self.client.put(f"{BASE_URL}/{wishlist.id}/clear")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(f"{BASE_URL}/{wishlist.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        logging.debug("Response data: %s", data)
+        resp = self.client.post(
+            f"{BASE_URL}/{prev_wishlist.id}/duplicate",
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        new_id = data["id"]
+
+        resp = self.client.get(f"{BASE_URL}/{new_id}")
+        data = resp.get_json()
+
+        self.assertNotEqual(data["id"], prev_wishlist.id)
+        self.assertEqual(data["title"], prev_wishlist.title + " COPY")
+        self.assertEqual(type(data["items"]), [])
+        self.assertNotEqual(data["date"], prev_wishlist)
+        self.assertEqual(data["count"], prev_wishlist.count)
+        self.assertEqual(data["user_id"], prev_wishlist.user_id)
+
+        resp = self.client.post(f"{BASE_URL}/0/duplicate")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
