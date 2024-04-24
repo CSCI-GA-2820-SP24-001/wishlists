@@ -260,26 +260,22 @@ $(function () {
      // Action for a wishlist (clear a wishlist)
      // ****************************************
      
-    $("#clearwish-btn").click(function () {
-         let wishlist_id = $("#wishlist_id").val();
+     $("#duplicate-btn").click(function () {
+        let wishlist_id = $("#wishlist_id").val();
 
-         $("#flash_message").empty();
+        $("#flash_message").empty();
 
-         let ajax = $.ajax({
-             type: "PUT", // or PUT or PATCH depending on your API design
-             url: `/wishlists/${wishlist_id}/clear`, // or another endpoint designed for clearing a wishlist
-             contentType: "application/json",
-             data: ''
-         })
+        let ajax = $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/wishlists/${wishlist_id}/duplicate`,
+            contentType: "application/json",
+            data: ''
+        })
 
-         ajax.done(function (res) {
-             clear_form_data()
-             flash_message("Wishlist cleared successfully!")
-         });
-    
-         ajax.fail(function(res){
-             flash_message("Server error!") // Adjust error message if needed
-         });
+        ajax.done(function (res) {
+            update_form_data(res)
+            flash_message("Success")
+        });
 
-     });
+    });
 })
