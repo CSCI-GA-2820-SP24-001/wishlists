@@ -170,7 +170,7 @@ def get_wishlists(wishlist_id):
 
 
 # Duplicate wishlist
-@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST"])
+@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST", "GET"])
 def duplicate_wishlists(wishlist_id):
     """
     Duplicate a Wishlist
@@ -202,7 +202,9 @@ def duplicate_wishlists(wishlist_id):
     wishlist_new.create()
     message = wishlist_new.serialize()
 
-    location_url = url_for(Wishlist, wishlist_id=wishlist_new.id, _external=True)
+    location_url = url_for(
+        "duplicate_wishlists", wishlist_id=wishlist_new.id, _external=True
+    )
 
     app.logger.info("Wishlist duplicated with ID: %d created.", wishlist_new.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
