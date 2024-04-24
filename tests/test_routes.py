@@ -364,23 +364,38 @@ class TestWishlistService(TestCase):
     # test for duplicating
     def test_duplicate_wishlist(self):
         """It should duplicate an existing Wishlist"""
-        wishlists = self._create_wishlists(11)
-        prev_wishlist = wishlists[0]
+        wishlists = self._create_wishlists(3)
+        test_wishlist = wishlists[0]
+        # print(test_wishlist)
 
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        resp = self.client.post(BASE_URL, json=test_wishlist.serialize())
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        test_data = resp.get_json()
         resp = self.client.post(
-            f"{BASE_URL}/{prev_wishlist.id}/duplicate",
+            f"{BASE_URL}/{test_wishlist.id}/duplicate",
+            json=test_wishlist.serialize(),
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         data = resp.get_json()
-        new_id = data["id"]
 
-        resp = self.client.get(f"{BASE_URL}/{new_id}")
-        data = resp.get_json()
+        # test_data = resp.get_json()
+        # print(test_data)
+        # new_id = test_data["id"]
+        # # new_dict = test_wishlist.serialize()
 
-        self.assertNotEqual(data["id"], prev_wishlist.id)
-        self.assertEqual(data["title"], prev_wishlist.title + " COPY")
+        # resp = self.client.post(
+        #     f"{BASE_URL}/{new_id}/duplicate",
+        #     # json=test_wishlist.serialize(),
+        #     content_type="application/json",
+        # )
+        # data = resp.get_json()
+        # print(data)
+
+        self.assertNotEqual(data["id"], test_data["id"])
+        self.assertEqual(data["title"], test_data["title"] + " COPY")
         self.assertEqual(type(data["items"]), list)
-        self.assertNotEqual(data["date"], prev_wishlist)
-        self.assertEqual(data["count"], prev_wishlist.count)
-        self.assertEqual(data["user_id"], prev_wishlist.user_id)
+        self.assertNotEqual(data["date"], test_data["date"])
+        self.assertEqual(data["count"], test_data["count"])
+        self.assertEqual(data["user_id"], test_data["user_id"])
