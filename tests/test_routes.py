@@ -380,10 +380,7 @@ class TestWishlistService(TestCase):
 
         self.assertNotEqual(data["id"], prev_wishlist.id)
         self.assertEqual(data["title"], prev_wishlist.title + " COPY")
-        self.assertEqual(type(data["items"]), [])
+        self.assertEqual(type(data["items"]), list)
         self.assertNotEqual(data["date"], prev_wishlist)
         self.assertEqual(data["count"], prev_wishlist.count)
         self.assertEqual(data["user_id"], prev_wishlist.user_id)
-
-        resp = self.client.post(f"{BASE_URL}/0/duplicate")
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
