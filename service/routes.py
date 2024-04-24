@@ -194,17 +194,18 @@ def duplicate_wishlists(wishlist_id):
     new_list["title"] = old["title"] + " COPY"
     new_list["items"] = old["items"]
     new_list["date"] = str(date.today())
+    new_list["count"] = old["count"]
+    new_list["user_id"] = old["user_id"]
+    new_list["description"] = old["description"]
     wishlist_new = Wishlist()
     wishlist_new.deserialize(new_list)
     wishlist_new.create()
+    message = wishlist_new.serialize()
 
     location_url = url_for(Wishlist, wishlist_id=wishlist_new.id, _external=True)
 
-    return (
-        new_list.serialize(),
-        status.HTTP_201_CREATED,
-        {"Location": location_url},
-    )
+    app.logger.info("Wishlist duplicated with ID: %d created.", wishlist_new.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################

@@ -113,4 +113,21 @@ Scenario: Read / get a Wishlist
     And I should see "summer" in the "Title" field
     And I should see "items for summer" in the "Description" field
 
-Scenario: Clear a Wishlist
+Scenario: Duplicate a Wishlist
+    When I visit the "Home Page"
+    And I set the "Title" to "Christmas"
+    And I set the "Description" to "Shopping list"
+    And I set the "User ID" to "1234"
+    And I set the "Count" to "8"
+    And I set the "Date" to "12-12-2020"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Duplicate" button
+    Then I should see the message "Success"
+    When I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Christmas COPY" in the results
+
+
+
