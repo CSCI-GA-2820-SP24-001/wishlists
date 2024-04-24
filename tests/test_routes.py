@@ -379,23 +379,15 @@ class TestWishlistService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         data = resp.get_json()
+        resp_id = data["id"]
+        response = self.client.get(
+            f"{BASE_URL}/{resp_id}/duplicate",
+            content_type="application/json",
+        )
 
-        # test_data = resp.get_json()
-        # print(test_data)
-        # new_id = test_data["id"]
-        # # new_dict = test_wishlist.serialize()
-
-        # resp = self.client.post(
-        #     f"{BASE_URL}/{new_id}/duplicate",
-        #     # json=test_wishlist.serialize(),
-        #     content_type="application/json",
-        # )
-        # data = resp.get_json()
-        # print(data)
-
-        self.assertNotEqual(data["id"], test_data["id"])
-        self.assertEqual(data["title"], test_data["title"] + " COPY")
-        self.assertEqual(type(data["items"]), list)
-        self.assertNotEqual(data["date"], test_data["date"])
-        self.assertEqual(data["count"], test_data["count"])
-        self.assertEqual(data["user_id"], test_data["user_id"])
+        self.assertNotEqual(response["id"], test_data["id"])
+        self.assertEqual(response["title"], test_data["title"] + " COPY")
+        self.assertEqual(type(response["items"]), list)
+        self.assertNotEqual(response["date"], test_data["date"])
+        self.assertEqual(response["count"], test_data["count"])
+        self.assertEqual(response["user_id"], test_data["user_id"])

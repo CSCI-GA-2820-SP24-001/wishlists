@@ -170,7 +170,7 @@ def get_wishlists(wishlist_id):
 
 
 # Duplicate wishlist
-@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST"])
+@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST", "GET"])
 def duplicate_wishlists(wishlist_id):
     """
     Duplicate a Wishlist
