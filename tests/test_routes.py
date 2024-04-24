@@ -372,22 +372,23 @@ class TestWishlistService(TestCase):
         resp = self.client.post(BASE_URL, json=test_wishlist.serialize())
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         test_data = resp.get_json()
-        resp = self.client.post(
-            f"{BASE_URL}/{test_wishlist.id}/duplicate",
+        duplicated = self.client.post(
+            f"{BASE_URL}/{test_data['id']}/duplicate",
             json=test_wishlist.serialize(),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        data = resp.get_json()
-        resp_id = data["id"]
-        response = self.client.get(
-            f"{BASE_URL}/{resp_id}/duplicate",
+        self.assertEqual(duplicated.status_code, status.HTTP_201_CREATED)
+        copy = resp.get_json()
+        # resp_id = data["id"]
+        retrieve = self.client.get(
+            f"{BASE_URL}/{copy['id']}/duplicate",
             content_type="application/json",
         )
+        retrieve = retrieve.get_json()
 
-        self.assertNotEqual(response["id"], test_data["id"])
-        self.assertEqual(response["title"], test_data["title"] + " COPY")
-        self.assertEqual(type(response["items"]), list)
-        self.assertNotEqual(response["date"], test_data["date"])
-        self.assertEqual(response["count"], test_data["count"])
-        self.assertEqual(response["user_id"], test_data["user_id"])
+        self.assertNotEqual(retrieve["id"], test_data["id"])
+        self.assertEqual(retrieve["title"], test_data["title"] + " COPY")
+        self.assertEqual(type(retrieve["items"]), list)
+        self.assertNotEqual(retrieve["date"], test_data["date"])
+        self.assertEqual(retrieve["count"], test_data["count"])
+        self.assertEqual(retrieve["user_id"], test_data["user_id"])
