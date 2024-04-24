@@ -124,12 +124,10 @@ Scenario: Duplicate a Wishlist
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Duplicate" button
-    And I paste the "Id" field
-    And I press the "Retrieve" button
     Then I should see the message "Success"
-    And I should see "Christmas" in the "Title" field
-    And I should see "Shopping list" in the "Description" field
-    And I should see "1234" in the "User ID" field
-    And I should see "8" in the "Count" field
+    When I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Christmas COPY" in the results
+
 
 

@@ -267,7 +267,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "POST",
-            url: `${BASE_URL}/wishlists/${wishlist_id}/duplicate`,
+            url: `/wishlists/${wishlist_id}/duplicate`,
             contentType: "application/json",
             data: ''
         })
