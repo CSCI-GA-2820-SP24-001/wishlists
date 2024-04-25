@@ -364,31 +364,22 @@ class TestWishlistService(TestCase):
     # test for duplicating
     def test_duplicate_wishlist(self):
         """It should duplicate an existing Wishlist"""
-        wishlists = self._create_wishlists(3)
-        test_wishlist = wishlists[0]
-        # print(test_wishlist)
-
+        test_wishlist = self._create_wishlists(1)[0]
         logging.debug("Test Wishlist: %s", test_wishlist.serialize())
-        resp = self.client.post(BASE_URL, json=test_wishlist.serialize())
+        resp = self.client.post(f"{BASE_URL}/{test_wishlist.id}/duplicate")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        test_data = resp.get_json()
-        duplicated = self.client.post(
-            f"{BASE_URL}/{test_data['id']}/duplicate",
-            json=test_wishlist.serialize(),
-            content_type="application/json",
-        )
-        self.assertEqual(duplicated.status_code, status.HTTP_201_CREATED)
-        copy = resp.get_json()
-        # resp_id = data["id"]
-        retrieve = self.client.get(
-            f"{BASE_URL}/{copy['id']}/duplicate",
-            content_type="application/json",
-        )
-        retrieve = retrieve.get_json()
 
-        self.assertNotEqual(retrieve["id"], test_data["id"])
-        self.assertEqual(retrieve["title"], test_data["title"] + " COPY")
-        self.assertEqual(type(retrieve["items"]), list)
-        self.assertNotEqual(retrieve["date"], test_data["date"])
-        self.assertEqual(retrieve["count"], test_data["count"])
-        self.assertEqual(retrieve["user_id"], test_data["user_id"])
+        # Check that it got the correct data
+        data = resp.get_json()
+        self.assertNotEqual(data["id"], test_wishlist.id)
+        self.assertEqual(data["title"], test_wishlist.title + " COPY")
+        self.assertEqual(type(data["items"]), list)
+        self.assertNotEqual(data["date"], test_wishlist.date)
+        self.assertEqual(data["count"], test_wishlist.count)
+        self.assertEqual(data["user_id"], test_wishlist.user_id)
+
+        # Make sure location header is set and valid
+        location = resp.headers.get("Location", None)
+        self.assertIsNotNone(location)
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

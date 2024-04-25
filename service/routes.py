@@ -170,15 +170,14 @@ def get_wishlists(wishlist_id):
 
 
 # Duplicate wishlist
-@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST", "GET"])
+@app.route("/wishlists/<int:wishlist_id>/duplicate", methods=["POST"])
 def duplicate_wishlists(wishlist_id):
     """
     Duplicate a Wishlist
 
     This endpoint will delete a Wishlist based the id specified in the path
     """
-    app.logger.info("Request to duplicate a wishlist")
-    check_content_type("application/json")
+    app.logger.info("Request to duplicate wishlist %s", wishlist_id)
 
     old_wishlist = Wishlist.find(wishlist_id)
     if not old_wishlist:
@@ -186,25 +185,15 @@ def duplicate_wishlists(wishlist_id):
             status.HTTP_404_NOT_FOUND,
             f"Wishlist {wishlist_id} does not exist",
         )
-    old = old_wishlist.serialize()
-    new_list = {}
-    for key, val in old.items():
-        if key not in ["id", "title", "user_id", "count", "date", "items"]:
-            new_list[key] = val
-    new_list["title"] = old["title"] + " COPY"
-    new_list["items"] = old["items"]
-    new_list["date"] = str(date.today())
-    new_list["count"] = old["count"]
-    new_list["user_id"] = old["user_id"]
-    new_list["description"] = old["description"]
+
     wishlist_new = Wishlist()
-    wishlist_new.deserialize(new_list)
+    wishlist_new.deserialize(old_wishlist.serialize())
+    wishlist_new.title = old_wishlist.title + " COPY"
+    wishlist_new.date = str(date.today())
     wishlist_new.create()
     message = wishlist_new.serialize()
 
-    location_url = url_for(
-        "duplicate_wishlists", wishlist_id=wishlist_new.id, _external=True
-    )
+    location_url = url_for("get_wishlists", wishlist_id=wishlist_new.id, _external=True)
 
     app.logger.info("Wishlist duplicated with ID: %d created.", wishlist_new.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
