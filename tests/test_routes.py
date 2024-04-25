@@ -6,7 +6,6 @@ TestWishlist API Service Test Suite
 
 import os
 import logging
-from datetime import date
 from unittest import TestCase
 from urllib.parse import quote_plus
 from wsgi import app
